@@ -27,10 +27,11 @@ import httpx
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
+from pydantic import ValidationError
 
 from .config import get_settings
 from .demo import run_scenarios
-from .engine import Engine
+from .engine import Engine, validate_request
 from .events import EventBus
 from .groq_client import GroqClient
 from .policy import load_policy
@@ -77,6 +78,12 @@ async def chat_completions(request: Request) -> JSONResponse:
         return JSONResponse({"error": "invalid JSON body"}, status_code=400)
     if not isinstance(payload, dict) or "messages" not in payload:
         return JSONResponse({"error": "missing 'messages'"}, status_code=400)
+    try:
+        validate_request(payload)  # enforce OpenAI-compatible schema before inspection
+    except ValidationError as exc:
+        return JSONResponse(
+            {"error": "invalid_request", "detail": str(exc).splitlines()[0]}, status_code=400
+        )
 
     payload["stream"] = False  # inspection needs the full completion
     session_id = request.headers.get("x-session-id") or f"sess-{uuid.uuid4().hex[:8]}"
@@ -111,14 +118,20 @@ async def events(request: Request) -> StreamingResponse:
     async def gen() -> AsyncIterator[bytes]:
         async with bus.subscribe() as q:
             yield b": connected\n\n"
+            idle = 0
             while True:
                 if await request.is_disconnected():
                     break
                 try:
-                    event = await asyncio.wait_for(q.get(), timeout=15.0)
+                    # short poll so a client disconnect is noticed within ~1s
+                    event = await asyncio.wait_for(q.get(), timeout=1.0)
                 except TimeoutError:
-                    yield b": ping\n\n"  # keepalive
+                    idle += 1
+                    if idle >= 15:  # keepalive every ~15s
+                        idle = 0
+                        yield b": ping\n\n"
                     continue
+                idle = 0
                 yield f"data: {event.model_dump_json()}\n\n".encode()
 
     return StreamingResponse(

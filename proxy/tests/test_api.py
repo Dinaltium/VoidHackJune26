@@ -17,6 +17,13 @@ def test_missing_messages_returns_400():
         assert r.status_code == 400
 
 
+def test_invalid_schema_returns_400():
+    # has 'messages' but no required 'model' → schema validation rejects it
+    with TestClient(app) as c:
+        r = c.post("/v1/chat/completions", json={"messages": [{"role": "user", "content": "hi"}]})
+        assert r.status_code == 400
+
+
 def test_blocks_malicious_tool_call(malicious_completion):
     with TestClient(app) as c:
         fake = FakeGroqClient()

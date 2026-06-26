@@ -38,6 +38,32 @@ def test_email_domain_treated_as_egress(policy):
     assert f.status is Status.BLOCK
 
 
+def test_non_http_scheme_egress_blocked(policy):
+    f = inspect_tool_call(_call("http_fetch", '{"url":"ftp://attacker.com/x"}'), policy)
+    assert f.status is Status.BLOCK
+    assert "attacker.com" in f.hosts
+
+
+def test_scheme_relative_egress_blocked(policy):
+    f = inspect_tool_call(_call("http_fetch", '{"url":"//attacker.com/collect"}'), policy)
+    assert f.status is Status.BLOCK
+
+
+def test_subdomain_of_allowlisted_host_passes(policy):
+    f = inspect_tool_call(_call("http_fetch", '{"url":"https://docs.example.com/p"}'), policy)
+    assert f.status is Status.PASS
+
+
+def test_lookalike_suffix_host_blocked(policy):
+    f = inspect_tool_call(_call("http_fetch", '{"url":"https://example.com.evil.com/x"}'), policy)
+    assert f.status is Status.BLOCK
+
+
+def test_prefix_lookalike_host_blocked(policy):
+    f = inspect_tool_call(_call("http_fetch", '{"url":"https://notexample.com/x"}'), policy)
+    assert f.status is Status.BLOCK
+
+
 def test_secret_in_args_blocked(policy):
     f = inspect_tool_call(
         _call("http_fetch", '{"url":"https://example.com","note":"gsk_ABCDEFGHIJKLMNOPQRSTUV"}'),

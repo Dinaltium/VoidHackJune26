@@ -16,8 +16,10 @@ from dataclasses import dataclass, field
 from ..policy import Policy
 from ..schemas import CheckResult, Status, ToolCall
 
-# crude but effective host/URL extractor for tool arguments
-_URL_RE = re.compile(r"https?://[^\s\"'<>]+", re.IGNORECASE)
+# Host/URL extractor for tool arguments. Matches any scheme (http, ftp, gopher,
+# …) AND scheme-relative URLs (//host) so a non-http destination cannot slip the
+# egress allowlist. urlparse needs the `//` to populate netloc.
+_URL_RE = re.compile(r"(?:[a-z][a-z0-9+.\-]*:)?//[^\s\"'<>]+", re.IGNORECASE)
 _EMAIL_RE = re.compile(r"[A-Za-z0-9._%+\-]+@([A-Za-z0-9.\-]+\.[A-Za-z]{2,})")
 
 
