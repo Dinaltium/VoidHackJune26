@@ -1,0 +1,65 @@
+# Agent Firewall — policy
+# Plain-English-ish, declarative. Hot-reloadable. Drives BOTH the deterministic
+# rules and the gpt-oss-safeguard reasoner (which reads `description` + lists).
+
+version: 1
+description: >
+  Default policy for a document-summarizing assistant. The agent may read and
+  summarize documents and fetch approved internal URLs. It must never email,
+  shell out, or transmit data to domains outside the egress allowlist, and must
+  never leak secrets or PII.
+
+# Default-deny: only these tools may be invoked by the model.
+tool_allowlist:
+  - read_doc
+  - summarize
+  - http_fetch
+  - search_kb
+
+# Tools that are recognized but always denied (sharper messaging than "unknown").
+tool_denylist:
+  - send_email
+  - run_shell
+  - delete_file
+  - transfer_funds
+
+# Outbound network egress: http_fetch / any URL arg may only target these hosts.
+egress_allowlist:
+  - example.com
+  - docs.company.internal
+  - kb.company.internal
+
+# Secret / credential patterns. Matches in tool-call args => block; in free text => redact.
+secret_patterns:
+  - name: groq_key
+    regex: 'gsk_[A-Za-z0-9]{20,}'
+  - name: openai_key
+    regex: 'sk-[A-Za-z0-9]{20,}'
+  - name: aws_access_key
+    regex: 'AKIA[0-9A-Z]{16}'
+  - name: generic_api_key
+    regex: '(?i)(api[_-]?key|secret|token)\s*[=:]\s*[A-Za-z0-9._\-]{12,}'
+
+# Heuristic injection trigger phrases (case-insensitive). The model-backed
+# Prompt Guard 2 layer augments this when a Groq key is present.
+injection_phrases:
+  - ignore previous instructions
+  - ignore prior instructions
+  - disregard the above
+  - disregard your instructions
+  - new instructions
+  - system override
+  - you are now
+  - exfiltrate
+  - send the api key
+  - email the key
+  - forward the credentials
+  - reveal your system prompt
+
+# Thresholds + behavior.
+injection_threshold: 0.80      # Prompt Guard 2 score above which we flag
+token_budget_per_session: 20000
+fail_closed: true              # detector error / uncertainty => block
+block_message: >
+  [Agent Firewall] This action was blocked by policy. A disallowed tool, an
+  out-of-policy destination, or a secret leak was detected.

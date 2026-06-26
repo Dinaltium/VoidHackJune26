@@ -1,0 +1,426 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------- tokens -- */
+/* Scene: a security engineer at 23:00 watching a wall-mounted control plane in
+   a dim SOC, scanning a live feed of agent actions for the red ones. Dark,
+   calm, high-contrast. One cool brand accent (azure); green/amber/red reserved
+   strictly for allow / flag / block decision states. */
+:root {
+  --bg: oklch(0.16 0.012 248);
+  --surface: oklch(0.2 0.014 248);
+  --surface-2: oklch(0.24 0.016 248);
+  --border: oklch(0.32 0.018 248);
+  --ink: oklch(0.97 0.004 248);
+  --muted: oklch(0.74 0.012 248);
+  --faint: oklch(0.6 0.012 248);
+
+  --brand: oklch(0.74 0.13 224);
+  --brand-ink: oklch(0.18 0.03 224);
+
+  --allow: oklch(0.78 0.15 152);
+  --flag: oklch(0.82 0.14 84);
+  --block: oklch(0.66 0.21 25);
+
+  --allow-tint: oklch(0.3 0.05 152 / 0.28);
+  --flag-tint: oklch(0.34 0.06 84 / 0.26);
+  --block-tint: oklch(0.34 0.09 25 / 0.34);
+
+  --radius: 12px;
+  --radius-sm: 8px;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --z-toast: 60;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.mono {
+  font-family: ui-monospace, "SF Mono", "Cascadia Code", "Fira Code", monospace;
+  font-size: 0.86em;
+}
+
+/* ---------------------------------------------------------------- shell --- */
+.app {
+  min-height: 100vh;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 28px 24px 64px;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-mark {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--brand);
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.brand p {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.conn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.conn-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--faint);
+}
+.conn[data-state="live"] .conn-dot {
+  background: var(--allow);
+  box-shadow: 0 0 0 0 var(--allow);
+  animation: pulse 2s var(--ease) infinite;
+}
+.conn[data-state="down"] .conn-dot {
+  background: var(--block);
+}
+
+/* ---------------------------------------------------------------- layout -- */
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 22px;
+  margin-top: 24px;
+}
+
+@media (max-width: 880px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.panel-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+/* ---------------------------------------------------------------- stats --- */
+.statusline {
+  display: flex;
+  gap: 10px;
+}
+
+.stat {
+  flex: 1;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+}
+
+.stat-top {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.stat-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+}
+.stat-dot.allow {
+  background: var(--allow);
+}
+.stat-dot.flag {
+  background: var(--flag);
+}
+.stat-dot.block {
+  background: var(--block);
+}
+
+.stat-num {
+  margin-top: 6px;
+  font-size: 26px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* ---------------------------------------------------------------- chips --- */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.chip {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--ink);
+}
+.chip.deny {
+  border-color: color-mix(in oklch, var(--block) 50%, var(--border));
+  color: var(--block);
+}
+.chip.allow {
+  border-color: color-mix(in oklch, var(--allow) 45%, var(--border));
+  color: var(--allow);
+}
+
+.policy-group + .policy-group {
+  margin-top: 14px;
+}
+.policy-label {
+  font-size: 12px;
+  color: var(--faint);
+  margin-bottom: 7px;
+}
+.policy-desc {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.55;
+  margin: 0 0 14px;
+}
+
+/* ---------------------------------------------------------------- buttons - */
+.controls {
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 550;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--ink);
+  cursor: pointer;
+  transition:
+    transform 0.12s var(--ease),
+    background 0.15s var(--ease),
+    border-color 0.15s var(--ease);
+}
+.btn:hover {
+  background: var(--surface);
+  border-color: var(--faint);
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+.btn--primary {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: var(--brand-ink);
+  font-weight: 600;
+}
+.btn--primary:hover {
+  background: color-mix(in oklch, var(--brand) 88%, white);
+  border-color: color-mix(in oklch, var(--brand) 88%, white);
+}
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ---------------------------------------------------------------- feed ---- */
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 360px;
+}
+
+.event {
+  display: flex;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  animation: riseIn 0.34s var(--ease) both;
+}
+.event--block {
+  background: var(--block-tint);
+  border-color: color-mix(in oklch, var(--block) 45%, var(--border));
+}
+.event--flag {
+  background: var(--flag-tint);
+  border-color: color-mix(in oklch, var(--flag) 40%, var(--border));
+}
+
+.badge {
+  flex-shrink: 0;
+  align-self: flex-start;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 4px 9px;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+.badge.allow {
+  background: var(--allow);
+  color: oklch(0.2 0.04 152);
+}
+.badge.flag {
+  background: var(--flag);
+  color: oklch(0.24 0.05 84);
+}
+.badge.block {
+  background: var(--block);
+  color: oklch(0.98 0.01 25);
+}
+
+.event-main {
+  min-width: 0;
+  flex: 1;
+}
+.event-title {
+  margin: 0;
+  font-size: 14.5px;
+  font-weight: 600;
+}
+.event-detail {
+  margin: 3px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+  word-break: break-word;
+}
+.event-meta {
+  margin-top: 9px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 11.5px;
+  color: var(--faint);
+}
+
+.empty {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 64px 24px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  color: var(--muted);
+}
+.empty strong {
+  display: block;
+  color: var(--ink);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+/* ---------------------------------------------------------------- motion -- */
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in oklch, var(--allow) 60%, transparent);
+  }
+  70% {
+    box-shadow: 0 0 0 6px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .event,
+  .conn[data-state="live"] .conn-dot {
+    animation: none;
+  }
+  .btn {
+    transition: none;
+  }
+}
