@@ -16,7 +16,7 @@ interface Props {
 export function Header({ connection, active }: Props) {
   return (
     <header className="header">
-      <div className="brand">
+      <Link href="/" className="brand brand-link">
         <span className="brand-mark" aria-hidden="true">
           <svg
             width="20"
@@ -39,11 +39,11 @@ export function Header({ connection, active }: Props) {
           <h1>Agent Firewall</h1>
           <p>The control plane that governs what your AI agents are allowed to do.</p>
         </div>
-      </div>
+      </Link>
 
       <div className="header-right">
         <nav className="nav">
-          <Link className={active === "feed" ? "active" : ""} href="/">
+          <Link className={active === "feed" ? "active" : ""} href="/console">
             Live feed
           </Link>
           <Link className={active === "mission" ? "active" : ""} href="/mission">

@@ -27,6 +27,8 @@ npm run build && npm run start          # http://localhost:3000
 # or: npm run dev   (dev mode; use prod build for e2e)
 ```
 
+Routes: `/` landing · `/console` live feed dashboard · `/mission` Mission Control.
+
 ## 3. Live demo
 
 With the firewall running on :8000:

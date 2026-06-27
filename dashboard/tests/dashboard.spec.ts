@@ -2,8 +2,14 @@ import { expect, test } from "@playwright/test";
 
 const FIREWALL = process.env.NEXT_PUBLIC_FIREWALL_URL ?? "http://127.0.0.1:8000";
 
-test("renders the control-plane shell", async ({ page }) => {
+test("landing page renders its hero and CTA", async ({ page }) => {
   await page.goto("/");
+  await expect(page.getByRole("heading", { name: /guard every action/i })).toBeVisible();
+  await expect(page.getByRole("link", { name: /launch console/i }).first()).toBeVisible();
+});
+
+test("renders the control-plane shell", async ({ page }) => {
+  await page.goto("/console");
   await expect(page.getByRole("heading", { name: "Agent Firewall" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Live activity" })).toBeVisible();
   await expect(page.getByRole("button", { name: /run demo attack/i })).toBeVisible();
@@ -21,7 +27,7 @@ test("streams a blocked event when the demo runs", async ({ page, request }) => 
   const health = await request.get(`${FIREWALL}/health`).catch(() => null);
   test.skip(!health?.ok(), "firewall backend not reachable on :8000");
 
-  await page.goto("/");
+  await page.goto("/console");
   await page.getByRole("button", { name: /run demo attack/i }).click();
 
   const blocked = page.locator('[data-testid="event-card"][data-action="block"]');
