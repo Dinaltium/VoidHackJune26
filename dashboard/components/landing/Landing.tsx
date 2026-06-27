@@ -88,7 +88,11 @@ export function Landing() {
       <section className="lp-manifesto-band">
         <ScrollReveal
           className="lp-manifesto"
-          text="Guardrails check what the model says. We check what the agent does — and strip the dangerous calls before they ever reach the world."
+          parts={[
+            "Guardrails check what the model says. We check what the agent",
+            { text: "does", block: "var(--brand)", color: "var(--brand)" },
+            "— and strip the dangerous calls before they ever reach the world.",
+          ]}
         />
       </section>
 
@@ -209,6 +213,18 @@ export function Landing() {
           </div>
           <div className="lp-receipt-verified">✓ verified</div>
         </div>
+      </section>
+
+      {/* second reveal — theme tie-in */}
+      <section className="lp-manifesto-band">
+        <ScrollReveal
+          className="lp-manifesto"
+          parts={[
+            "Most people only see interfaces. The firewall is the",
+            { text: "invisible operating layer", block: "var(--brand)", color: "var(--brand)" },
+            "that decides what every agent is allowed to do.",
+          ]}
+        />
       </section>
 
       {/* close */}
