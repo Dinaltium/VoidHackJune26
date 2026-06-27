@@ -80,6 +80,7 @@ class Engine:
             "rule_fired": outbound.rule_fired,
             "receipt_id": outbound_receipt.id,
             "stripped_tool_calls": outbound.stripped_tool_calls,
+            "blocked_calls": outbound.blocked_calls,
         }
         return completion
 
@@ -170,6 +171,17 @@ class Engine:
                 first_blocked = next(f for f in findings if f.status is Status.BLOCK)
                 decision.rule_fired = "deterministic_rules"
                 decision.reason = "; ".join(first_blocked.reasons)
+
+                # record the *attempted* (now-blocked) actions, with secrets masked,
+                # so callers can show "tried to wire $5k to attacker" without leaking
+                by_id = {tc.get("id"): tc for tc in raw_calls}
+                for f in findings:
+                    if f.status is Status.BLOCK:
+                        raw_fn = (by_id.get(f.tool_call_id, {}).get("function") or {})
+                        safe_args, _ = pii.redact(raw_fn.get("arguments") or "", self.policy)
+                        decision.blocked_calls.append(
+                            {"name": f.tool_name, "arguments": safe_args, "reasons": f.reasons}
+                        )
 
                 # 2) selective safeguard judge — adds auditable reasoning
                 judged, reasoning = await judge_action(

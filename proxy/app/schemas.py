@@ -85,6 +85,7 @@ class Decision(BaseModel):
     rule_fired: str | None = None
     redactions: int = 0
     stripped_tool_calls: list[str] = Field(default_factory=list)
+    blocked_calls: list[dict[str, Any]] = Field(default_factory=list)  # {name, arguments, reasons}
     reasoning: str | None = None  # gpt-oss-safeguard chain-of-thought, when used
     modified: bool = False
 

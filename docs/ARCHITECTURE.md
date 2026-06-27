@@ -29,6 +29,7 @@ agent ──OpenAI API──► Firewall proxy (FastAPI) ──► Upstream LLM 
 | `app/store.py` | SQLite (SQLAlchemy 2.0): receipts, events, usage |
 | `app/events.py` | In-process pub/sub for SSE |
 | `app/demo.py` | Deterministic attack scenarios for the dashboard |
+| `app/mission.py` | Server-side autonomous agent runner (governed vs ungoverned) for Mission Control |
 | `dashboard/` | Next.js 16 + Tailwind 4 live control-plane UI |
 | `agent/` | Demo victim agent + poisoned document |
 

@@ -45,6 +45,14 @@ python -m agent.run_attack --task email
 The dashboard (`/`) shows decisions stream in live; **Run demo attack** replays a
 spread of attacks through the real engine. See [docs/RUNBOOK.md](docs/RUNBOOK.md).
 
+### Mission Control (`/mission`)
+
+An interactive page where you hand an autonomous agent a real goal (editable task
++ a knowledge document you can poison), toggle the **firewall ON/OFF**, and watch
+a **live LLM** execute step by step. Governed: the agent gets hijacked but every
+dangerous call is stripped — *"Firewall held."* Ungoverned: the same agent
+exfiltrates — *"Breach."* An Impact panel proves what reached the outside world.
+
 ## Stack
 
 | Layer | Tech |

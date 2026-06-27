@@ -30,7 +30,7 @@ export function Dashboard() {
 
   return (
     <main className="app">
-      <Header connection={connection} />
+      <Header connection={connection} active="feed" />
       <StatusLine stats={stats} />
 
       <div className="layout">

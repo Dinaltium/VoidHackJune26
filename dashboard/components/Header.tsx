@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 type Connection = "connecting" | "live" | "down";
 
 const LABEL: Record<Connection, string> = {
@@ -6,7 +8,12 @@ const LABEL: Record<Connection, string> = {
   down: "Disconnected",
 };
 
-export function Header({ connection }: { connection: Connection }) {
+interface Props {
+  connection?: Connection;
+  active: "feed" | "mission";
+}
+
+export function Header({ connection, active }: Props) {
   return (
     <header className="header">
       <div className="brand">
@@ -30,12 +37,25 @@ export function Header({ connection }: { connection: Connection }) {
         </span>
         <div>
           <h1>Agent Firewall</h1>
-          <p>Guards what the agent does — not just what the model says.</p>
+          <p>The control plane that governs what your AI agents are allowed to do.</p>
         </div>
       </div>
-      <div className="conn" data-state={connection} role="status" aria-live="polite">
-        <span className="conn-dot" />
-        {LABEL[connection]}
+
+      <div className="header-right">
+        <nav className="nav">
+          <Link className={active === "feed" ? "active" : ""} href="/">
+            Live feed
+          </Link>
+          <Link className={active === "mission" ? "active" : ""} href="/mission">
+            Mission Control
+          </Link>
+        </nav>
+        {connection ? (
+          <div className="conn" data-state={connection} role="status" aria-live="polite">
+            <span className="conn-dot" />
+            {LABEL[connection]}
+          </div>
+        ) : null}
       </div>
     </header>
   );

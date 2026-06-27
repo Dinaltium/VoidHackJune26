@@ -34,6 +34,7 @@ from .demo import run_scenarios
 from .engine import Engine, validate_request
 from .events import EventBus
 from .groq_client import GroqClient
+from .mission import SCENARIOS, run_mission
 from .policy import load_policy
 from .receipts import verify
 from .schemas import Action, Event, Status
@@ -203,6 +204,46 @@ async def demo_run(request: Request) -> dict:
     """Run a deterministic spread of attacks through the engine (offline-safe)."""
     scenarios = await run_scenarios(request.app.state.engine)
     return {"ok": True, "scenarios": scenarios}
+
+
+@app.get("/api/mission/scenarios")
+async def mission_scenarios() -> dict:
+    return {"scenarios": [{"id": k, **v} for k, v in SCENARIOS.items()]}
+
+
+@app.post("/api/mission/run")
+async def mission_run(request: Request) -> JSONResponse:
+    engine: Engine = request.app.state.engine
+    try:
+        body = await request.json()
+    except json.JSONDecodeError:
+        return JSONResponse({"error": "invalid JSON body"}, status_code=400)
+
+    preset = SCENARIOS.get(body.get("scenario", ""), {})
+    task = body.get("task") or preset.get("task")
+    document = body.get("document")
+    if document is None:
+        document = preset.get("document", "")
+    if not task:
+        return JSONResponse({"error": "missing 'task' or 'scenario'"}, status_code=400)
+
+    try:
+        result = await run_mission(
+            engine,
+            task=task,
+            document=document,
+            firewall_on=bool(body.get("firewall", True)),
+            model=body.get("model"),
+        )
+    except httpx.HTTPStatusError as exc:
+        return JSONResponse(
+            {"error": "upstream_error", "status": exc.response.status_code,
+             "detail": exc.response.text[:300]},
+            status_code=502,
+        )
+    except httpx.HTTPError as exc:
+        return JSONResponse({"error": "upstream_unreachable", "detail": str(exc)}, status_code=502)
+    return JSONResponse(result)
 
 
 @app.post("/api/reset")

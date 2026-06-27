@@ -72,6 +72,7 @@ npx playwright test                # needs firewall on :8000 for the live test
 | GET | `/api/receipts` `/api/receipts/{id}` | signed receipts (+ verification) |
 | GET | `/api/policy` `/api/stats` | dashboard data |
 | POST | `/api/demo/run` `/api/seed` `/api/reset` | demo helpers |
+| GET/POST | `/api/mission/scenarios` · `/api/mission/run` | Mission Control: run an agent governed/ungoverned |
 | GET | `/health` | liveness |
 
 ## Rotating the key
