@@ -1,6 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ModeToggle } from "@/components/ModeToggle";
+import { BackgroundImageTexture } from "@/components/ui/bg-image-texture";
 import { HeroFirewall } from "./HeroFirewall";
+import { LaunchButton } from "./LaunchButton";
+import { ScrollReveal } from "./ScrollReveal";
 
 const GITHUB = "https://github.com/Dinaltium/VoidHackJune26";
 
@@ -35,7 +39,7 @@ function Shield() {
 
 export function Landing() {
   return (
-    <div className="lp">
+    <BackgroundImageTexture variant="debut-light" opacity={0.4} className="lp">
       <nav className="lp-nav">
         <span className="lp-brand">
           <span className="lp-brand-mark">
@@ -49,6 +53,7 @@ export function Landing() {
           <a href={GITHUB} target="_blank" rel="noreferrer">
             GitHub
           </a>
+          <ModeToggle />
           <Link className="lp-cta" href="/console">
             Launch console
           </Link>
@@ -68,21 +73,24 @@ export function Landing() {
             run.
           </p>
           <div className="lp-actions">
-            <Link className="lp-cta lp-cta--lg" href="/console">
-              Launch console
-            </Link>
+            <LaunchButton href="/console">Launch console</LaunchButton>
             <Link className="lp-ghost" href="/mission">
               See it block an attack →
             </Link>
           </div>
-          <p className="lp-microcopy mono">
-            guardrails check what the model says · we check what the agent does
-          </p>
         </div>
         <div className="lp-hero-art">
           <HeroFirewall />
         </div>
       </header>
+
+      {/* manifesto — scroll reveal */}
+      <section className="lp-manifesto-band">
+        <ScrollReveal
+          className="lp-manifesto"
+          text="Guardrails check what the model says. We check what the agent does — and strip the dangerous calls before they ever reach the world."
+        />
+      </section>
 
       {/* the gap */}
       <section className="lp-section">
@@ -207,9 +215,7 @@ export function Landing() {
       <section className="lp-close">
         <h2 className="lp-close-h">The operating layer for AI agents.</h2>
         <div className="lp-actions">
-          <Link className="lp-cta lp-cta--lg" href="/console">
-            Launch console
-          </Link>
+          <LaunchButton href="/console">Launch console</LaunchButton>
           <a className="lp-ghost" href={GITHUB} target="_blank" rel="noreferrer">
             View on GitHub →
           </a>
@@ -220,6 +226,6 @@ export function Landing() {
         <span>Agent Firewall</span>
         <span className="mono">VoidHack June 2026 · The Operating Layer of the Internet</span>
       </footer>
-    </div>
+    </BackgroundImageTexture>
   );
 }

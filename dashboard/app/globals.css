@@ -1,35 +1,111 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
 
 /* ---------------------------------------------------------------- tokens -- */
-/* Scene: a security engineer at 23:00 watching a wall-mounted control plane in
-   a dim SOC, scanning a live feed of agent actions for the red ones. Dark,
-   calm, high-contrast. One cool brand accent (azure); green/amber/red reserved
-   strictly for allow / flag / block decision states. */
+/* Agent Firewall — light primary + dark. Brand = OXBLOOD (deep burgundy).
+   Neutrals are warm-graphite. green/amber/red stay reserved for the
+   allow / flag / block decision states. shadcn tokens + design-system aliases
+   share one source of truth so the whole app re-themes by swapping these. */
 :root {
-  --bg: oklch(0.16 0.012 248);
-  --surface: oklch(0.2 0.014 248);
-  --surface-2: oklch(0.24 0.016 248);
-  --border: oklch(0.32 0.018 248);
-  --ink: oklch(0.97 0.004 248);
-  --muted: oklch(0.74 0.012 248);
-  --faint: oklch(0.6 0.012 248);
+  --radius: 0.7rem;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --z-toast: 60;
 
-  --brand: oklch(0.74 0.13 224);
-  --brand-ink: oklch(0.18 0.03 224);
+  /* shadcn — light */
+  --background: oklch(0.992 0.003 60);
+  --foreground: oklch(0.22 0.012 30);
+  --card: oklch(1 0 0);
+  --card-foreground: var(--foreground);
+  --popover: oklch(1 0 0);
+  --popover-foreground: var(--foreground);
+  --primary: oklch(0.43 0.115 25);
+  --primary-foreground: oklch(0.98 0.012 50);
+  --secondary: oklch(0.965 0.004 60);
+  --secondary-foreground: oklch(0.26 0.015 30);
+  --accent: oklch(0.95 0.022 25);
+  --accent-foreground: oklch(0.4 0.1 25);
+  --destructive: oklch(0.55 0.2 27);
+  --border: oklch(0.912 0.004 60);
+  --input: oklch(0.912 0.004 60);
+  --ring: oklch(0.43 0.115 25);
 
+  /* text + semantic — light (deeper for contrast on white) */
+  --muted: oklch(0.5 0.012 30);
+  --faint: oklch(0.62 0.01 30);
+  --allow: oklch(0.52 0.13 158);
+  --flag: oklch(0.56 0.12 70);
+  --block: oklch(0.52 0.19 27);
+  --allow-tint: oklch(0.95 0.04 158);
+  --flag-tint: oklch(0.95 0.05 80);
+  --block-tint: oklch(0.95 0.05 27);
+
+  /* design-system aliases → theme-aware shadcn tokens */
+  --bg: var(--background);
+  --surface: var(--card);
+  --surface-2: var(--secondary);
+  --ink: var(--foreground);
+  --brand: var(--primary);
+  --brand-ink: var(--primary-foreground);
+}
+
+.dark {
+  --background: oklch(0.18 0.008 28);
+  --foreground: oklch(0.96 0.004 60);
+  --card: oklch(0.218 0.009 28);
+  --card-foreground: var(--foreground);
+  --popover: oklch(0.218 0.009 28);
+  --popover-foreground: var(--foreground);
+  --primary: oklch(0.56 0.16 26);
+  --primary-foreground: oklch(0.98 0.012 50);
+  --secondary: oklch(0.262 0.009 28);
+  --secondary-foreground: var(--foreground);
+  --accent: oklch(0.31 0.045 26);
+  --accent-foreground: oklch(0.93 0.02 50);
+  --destructive: oklch(0.62 0.2 27);
+  --border: oklch(0.3 0.009 28);
+  --input: oklch(0.3 0.009 28);
+  --ring: oklch(0.56 0.16 26);
+
+  --muted: oklch(0.72 0.01 60);
+  --faint: oklch(0.6 0.012 60);
   --allow: oklch(0.78 0.15 152);
   --flag: oklch(0.82 0.14 84);
-  --block: oklch(0.66 0.21 25);
-
-  --allow-tint: oklch(0.3 0.05 152 / 0.28);
+  --block: oklch(0.7 0.2 27);
+  --allow-tint: oklch(0.32 0.05 152 / 0.3);
   --flag-tint: oklch(0.34 0.06 84 / 0.26);
-  --block-tint: oklch(0.34 0.09 25 / 0.34);
+  --block-tint: oklch(0.34 0.1 27 / 0.36);
+}
 
-  --radius: 12px;
-  --radius-sm: 8px;
-  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--secondary);
+  --color-muted-foreground: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--primary-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 
-  --z-toast: 60;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
 }
 
 * {
@@ -45,7 +121,7 @@ body {
 body {
   background: var(--bg);
   color: var(--ink);
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
   font-size: 15px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -446,6 +522,30 @@ body {
 .nav a.active {
   background: var(--surface-2);
   color: var(--ink);
+}
+
+.mode-toggle {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+  transition:
+    color 0.15s var(--ease),
+    background 0.15s var(--ease),
+    border-color 0.15s var(--ease);
+}
+.mode-toggle:hover {
+  color: var(--ink);
+  border-color: var(--faint);
+}
+.mode-toggle:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
 }
 
 .mc-bar {
@@ -915,7 +1015,11 @@ body {
   position: relative;
   border: 1px solid var(--border);
   border-radius: 16px;
-  background: linear-gradient(180deg, var(--surface), var(--bg));
+  background: radial-gradient(
+    130% 110% at 72% 18%,
+    color-mix(in oklch, var(--brand) 9%, var(--surface)),
+    var(--surface)
+  );
   padding: 18px;
   overflow: hidden;
 }
@@ -1080,6 +1184,23 @@ body {
     opacity: 0;
     transform: translate(300px, 160px) scale(1.25);
   }
+}
+
+/* manifesto — scroll reveal */
+.lp-manifesto-band {
+  max-width: 980px;
+  margin-inline: auto;
+  padding: clamp(64px, 11vw, 152px) 24px;
+}
+.lp-manifesto {
+  margin: 0;
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 600;
+  font-size: clamp(1.45rem, 3.3vw, 2.7rem);
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  text-wrap: balance;
 }
 
 /* sections */

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ModeToggle } from "./ModeToggle";
 
 type Connection = "connecting" | "live" | "down";
 
@@ -50,6 +51,7 @@ export function Header({ connection, active }: Props) {
             Mission Control
           </Link>
         </nav>
+        <ModeToggle />
         {connection ? (
           <div className="conn" data-state={connection} role="status" aria-live="polite">
             <span className="conn-dot" />

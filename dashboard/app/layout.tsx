@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
-import { Outfit } from "next/font/google";
+import { Geist, Outfit } from "next/font/google";
 import type { ReactNode } from "react";
+import { ThemeProvider } from "@/components/theme-provider";
+import { cn } from "@/lib/utils";
 import "./globals.css";
 
+const sans = Geist({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
 const display = Outfit({
   subsets: ["latin"],
   weight: ["500", "600", "700", "800"],
@@ -18,8 +21,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={display.variable}>
-      <body>{children}</body>
+    <html lang="en" className={cn(sans.variable, display.variable)} suppressHydrationWarning>
+      <body>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem={false}
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
