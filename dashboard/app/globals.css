@@ -1192,6 +1192,14 @@ body {
   margin-inline: auto;
   padding: clamp(64px, 11vw, 152px) 24px;
 }
+.reveal-section {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  max-width: 980px;
+  margin-inline: auto;
+  padding: 0 24px;
+}
 .lp-manifesto {
   margin: 0;
   font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;

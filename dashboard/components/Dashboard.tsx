@@ -11,7 +11,7 @@ import { PolicyPanel } from "./PolicyPanel";
 import { StatusLine } from "./StatusLine";
 
 export function Dashboard() {
-  const { events, stats, connection, clear } = useEvents();
+  const { events, stats, clear } = useEvents();
   const [policy, setPolicy] = useState<Policy | null>(null);
 
   useEffect(() => {
@@ -30,7 +30,7 @@ export function Dashboard() {
 
   return (
     <main className="app">
-      <Header connection={connection} active="feed" />
+      <Header active="feed" />
       <StatusLine stats={stats} />
 
       <div className="layout">

@@ -1,20 +1,7 @@
 import Link from "next/link";
-import { ModeToggle } from "./ModeToggle";
+import { ThemeToggleButton } from "@/components/ui/skiper-ui/skiper26";
 
-type Connection = "connecting" | "live" | "down";
-
-const LABEL: Record<Connection, string> = {
-  connecting: "Connecting…",
-  live: "Live",
-  down: "Disconnected",
-};
-
-interface Props {
-  connection?: Connection;
-  active: "feed" | "mission";
-}
-
-export function Header({ connection, active }: Props) {
+export function Header({ active }: { active: "feed" | "mission" }) {
   return (
     <header className="header">
       <Link href="/" className="brand brand-link">
@@ -51,13 +38,7 @@ export function Header({ connection, active }: Props) {
             Mission Control
           </Link>
         </nav>
-        <ModeToggle />
-        {connection ? (
-          <div className="conn" data-state={connection} role="status" aria-live="polite">
-            <span className="conn-dot" />
-            {LABEL[connection]}
-          </div>
-        ) : null}
+        <ThemeToggleButton variant="rectangle" start="bottom-up" blur={false} className="size-9" />
       </div>
     </header>
   );
