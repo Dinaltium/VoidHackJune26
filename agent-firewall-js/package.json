@@ -1,0 +1,49 @@
+{
+  "name": "voidhack-agent-firewall",
+  "version": "1.0.0",
+  "description": "Drop-in security guardrails for AI agents. Blocks unauthorized tool calls, exfiltration, prompt injection, and secret leaks — in-process, sub-millisecond, zero network.",
+  "type": "module",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./langchain": "./lib/langchain.js"
+  },
+  "bin": {
+    "voidhack-agent-firewall": "./bin/cli.js"
+  },
+  "files": [
+    "lib/",
+    "bin/",
+    "templates/"
+  ],
+  "scripts": {
+    "demo": "node bin/cli.js demo",
+    "test": "node --test lib/__tests__/rules.test.js"
+  },
+  "keywords": [
+    "ai",
+    "agent",
+    "firewall",
+    "security",
+    "guardrails",
+    "prompt-injection",
+    "langchain",
+    "openai",
+    "tool-use"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  },
+  "peerDependencies": {
+    "openai": ">=4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "openai": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

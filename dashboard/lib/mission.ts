@@ -52,6 +52,15 @@ export interface MissionRequest {
   firewall: boolean;
 }
 
+export interface ExtractResult {
+  filename: string;
+  kind: "pdf" | "email" | "text";
+  chars: number;
+  text: string;
+  suspicious: boolean;
+  signals: string[];
+}
+
 export async function getScenarios(): Promise<Scenario[]> {
   const res = await fetch(`${FIREWALL_URL}/api/mission/scenarios`, { cache: "no-store" });
   if (!res.ok) throw new Error(`scenarios → ${res.status}`);
@@ -66,4 +75,24 @@ export async function runMission(body: MissionRequest): Promise<MissionResult> {
   });
   if (!res.ok) throw new Error(`mission → ${res.status}`);
   return (await res.json()) as MissionResult;
+}
+
+/** Upload a real file (PDF / email / text) and get back the text an agent would
+ *  read, plus an injection pre-scan. The text becomes the mission's document. */
+export async function extractDocument(file: Blob, filename: string): Promise<ExtractResult> {
+  const form = new FormData();
+  form.append("file", file, filename);
+  const res = await fetch(`${FIREWALL_URL}/api/mission/extract`, {
+    method: "POST",
+    body: form,
+  });
+  if (!res.ok) throw new Error(`extract → ${res.status}`);
+  return (await res.json()) as ExtractResult;
+}
+
+/** Fetch a bundled sample file from /public and run it through extraction. */
+export async function extractSample(path: string, filename: string): Promise<ExtractResult> {
+  const res = await fetch(path, { cache: "no-store" });
+  if (!res.ok) throw new Error(`sample → ${res.status}`);
+  return extractDocument(await res.blob(), filename);
 }

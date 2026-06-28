@@ -31,6 +31,7 @@ class ToolFinding:
     reasons: list[str] = field(default_factory=list)
     hosts: list[str] = field(default_factory=list)
     secrets: list[str] = field(default_factory=list)
+    arg_hits: list[str] = field(default_factory=list)
 
 
 def _extract_hosts(arguments: str) -> list[str]:
@@ -49,6 +50,20 @@ def find_secrets(text: str, policy: Policy) -> list[str]:
     for name, pattern in policy.compiled_secrets():
         if pattern.search(text or ""):
             hits.append(name)
+    return hits
+
+
+def check_arg_rules(tool: str, arguments: str, policy: Policy) -> list[str]:
+    """Return the reasons of every argument rule that fires for this tool call.
+
+    Catches the Trail of Bits class: an allowlisted tool weaponized through its
+    arguments (injected `-exec`, shell metacharacters, path traversal, a
+    local-file/SSRF scheme) — a vector text guardrails never see.
+    """
+    hits: list[str] = []
+    for rule, pattern in policy.compiled_arg_rules():
+        if rule.applies_to(tool) and pattern.search(arguments or ""):
+            hits.append(rule.reason)
     return hits
 
 
@@ -79,6 +94,13 @@ def inspect_tool_call(tc: ToolCall, policy: Policy) -> ToolFinding:
     if secrets:
         finding.status = Status.BLOCK
         finding.reasons.append(f"secret(s) in tool args: {', '.join(secrets)}")
+
+    # 4) argument-level danger (allowlisted tool, weaponized args)
+    arg_hits = check_arg_rules(name, args, policy)
+    finding.arg_hits = arg_hits
+    if arg_hits:
+        finding.status = Status.BLOCK
+        finding.reasons.extend(arg_hits)
 
     return finding
 

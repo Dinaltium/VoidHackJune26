@@ -8,6 +8,8 @@ SQLAlchemy>=2.0.36,<2.1
 PyYAML>=6.0
 python-dotenv>=1.0
 openai>=1.59          # demo agent client
+pypdf>=5.1            # PDF text extraction (document ingestion)
+python-multipart>=0.0.18  # multipart upload parsing for /api/mission/extract
 
 # dev / test
 pytest>=8.3

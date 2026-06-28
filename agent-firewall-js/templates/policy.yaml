@@ -1,4 +1,3 @@
-
 # Agent Firewall — policy
 # Plain-English-ish, declarative. Hot-reloadable. Drives BOTH the deterministic
 # rules and the gpt-oss-safeguard reasoner (which reads `description` + lists).
@@ -23,7 +22,6 @@ tool_denylist:
   - run_shell
   - delete_file
   - transfer_funds
-  - run_audit
 
 # Outbound network egress: http_fetch / any URL arg may only target these hosts.
 egress_allowlist:

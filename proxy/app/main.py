@@ -24,21 +24,26 @@ from contextlib import asynccontextmanager
 from datetime import UTC, datetime
 
 import httpx
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Body, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import ValidationError
+from starlette.datastructures import UploadFile
 
 from .config import get_settings
 from .demo import run_scenarios
+from .detect import injection
 from .engine import Engine, validate_request
 from .events import EventBus
 from .groq_client import GroqClient
+from .ingest import extract_document
 from .mission import SCENARIOS, run_mission
 from .policy import load_policy
 from .receipts import verify
 from .schemas import Action, Event, Status
 from .store import Store
+
+_MAX_UPLOAD_BYTES = 2_000_000
 
 
 @asynccontextmanager
@@ -173,6 +178,77 @@ async def get_policy(request: Request) -> dict:
     return policy.model_dump(mode="json")
 
 
+@app.get("/api/policy/raw")
+async def get_policy_raw(request: Request):
+    settings = request.app.state.settings
+    try:
+        content = settings.policy_path.read_text(encoding="utf-8")
+        return {"yaml": content}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to read policy: {str(e)}")
+
+
+@app.post("/api/policy/raw")
+async def save_policy_raw(request: Request, body: dict = Body(...)):
+    yaml_content = body.get("yaml", "")
+    if not yaml_content.strip():
+        raise HTTPException(status_code=400, detail="YAML content cannot be empty")
+    
+    # 1. Parse YAML to check syntax
+    import yaml
+    try:
+        parsed = yaml.safe_load(yaml_content)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Invalid YAML syntax: {str(e)}")
+        
+    if not isinstance(parsed, dict):
+        raise HTTPException(status_code=400, detail="Policy must be a YAML object/dictionary")
+        
+    # 2. Validate against Pydantic schema
+    from .policy import Policy
+    try:
+        new_policy = Policy.model_validate(parsed)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Policy schema validation failed: {str(e)}")
+        
+    # 3. Save to file
+    settings = request.app.state.settings
+    try:
+        settings.policy_path.write_text(yaml_content, encoding="utf-8")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to write policy file: {str(e)}")
+        
+    # 4. Reload in memory
+    request.app.state.policy = new_policy
+    request.app.state.engine.policy = new_policy
+    
+    return {"ok": True, "policy": new_policy.model_dump(mode="json")}
+
+
+@app.post("/api/policy/ai-edit")
+async def ai_edit_policy(request: Request, body: dict = Body(...)):
+    prompt = body.get("prompt", "")
+    if not prompt.strip():
+        raise HTTPException(status_code=400, detail="Prompt cannot be empty")
+        
+    # Read current policy YAML content
+    settings = request.app.state.settings
+    try:
+        current_yaml = settings.policy_path.read_text(encoding="utf-8")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to read current policy: {str(e)}")
+        
+    # Query the Groq AI Policy Editor assistant
+    client = request.app.state.client
+    result = await client.ai_edit_policy(current_yaml, prompt)
+    if not result:
+        raise HTTPException(status_code=503, detail="AI Assistant service unavailable")
+        
+    return result
+
+
+
+
 @app.get("/api/stats")
 async def stats(request: Request) -> dict:
     store: Store = request.app.state.store
@@ -244,6 +320,43 @@ async def mission_run(request: Request) -> JSONResponse:
     except httpx.HTTPError as exc:
         return JSONResponse({"error": "upstream_unreachable", "detail": str(exc)}, status_code=502)
     return JSONResponse(result)
+
+
+@app.post("/api/mission/extract")
+async def mission_extract(request: Request) -> JSONResponse:
+    """Ingest a real uploaded file (PDF / email / text) into the text an agent
+    would read, and pre-scan it for injection signals. The returned `text` is
+    fed straight into a mission's knowledge source."""
+    form = await request.form()
+    upload = form.get("file")
+    if not isinstance(upload, UploadFile):
+        return JSONResponse({"error": "no file uploaded (field 'file')"}, status_code=400)
+
+    data = await upload.read()
+    if len(data) > _MAX_UPLOAD_BYTES:
+        return JSONResponse({"error": "file too large (max 2 MB)"}, status_code=413)
+    if not data:
+        return JSONResponse({"error": "empty file"}, status_code=400)
+
+    try:
+        text, kind = extract_document(upload.filename or "", data)
+    except Exception as exc:  # extraction is best-effort; a bad container is never fatal
+        return JSONResponse(
+            {"error": "could not extract text", "detail": str(exc)[:200]}, status_code=422
+        )
+
+    policy = request.app.state.policy
+    scan = injection.scan_text(text, policy, source=kind)
+    return JSONResponse(
+        {
+            "filename": upload.filename or "upload",
+            "kind": kind,
+            "chars": len(text),
+            "text": text,
+            "suspicious": scan.status is Status.FLAG,
+            "signals": scan.meta.get("signals", []),
+        }
+    )
 
 
 @app.post("/api/reset")

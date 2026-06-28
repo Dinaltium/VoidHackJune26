@@ -61,7 +61,7 @@ export function Dashboard() {
 
         <aside className="sidebar">
           <Controls onDemo={onDemo} onReset={onReset} />
-          <PolicyPanel policy={policy} />
+          <PolicyPanel policy={policy} onPolicyUpdated={setPolicy} />
         </aside>
       </div>
     </main>

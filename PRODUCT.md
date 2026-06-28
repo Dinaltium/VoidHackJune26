@@ -61,3 +61,34 @@ WCAG 2.1 AA. Body text ≥ 4.5:1 against its surface; state colors are always
 paired with a text label and badge so color is never the sole signal (supports
 color blindness). Every animation has a `prefers-reduced-motion` alternative.
 Interactive controls are keyboard-reachable with a visible focus ring.
+
+## Threat-research alignment
+
+The design is grounded in the 2022–2026 prompt-injection survey in
+[`docs/RESEARCH.md`](docs/RESEARCH.md) (Gravitee, OWASP GenAI Top 10, Trail of
+Bits, Unit 42, disclosed CVEs). That report ends in a 12-item defense-in-depth
+checklist; Agent Firewall implements its core technical controls **as a drop-in
+proxy** — the integration gap the report says almost nobody ships.
+
+| Research recommendation | In Agent Firewall |
+|---|---|
+| **Policy engine** ("grumpy compliance officer" / OPA) vets every action | Core — `policy.yaml` drives deterministic rules; the model never self-approves |
+| **Least privilege** | Tool allowlist + egress host allowlist |
+| **Whitelist tools *and arguments*** (Trail of Bits `-exec` class) | Tool allow/deny **plus** `arg_rules`: an allowlisted tool is still blocked when its arguments carry a dangerous payload (shell metacharacters, `-exec`, path traversal, local-file/SSRF scheme) |
+| **Sanitize / validate outputs** | Outbound inspection strips disallowed `tool_calls`; Prompt Guard 2 scans tool results |
+| **No secrets leaking out** | Secret regex + PII redaction in flight and in receipts |
+| **Tamper-evident logging** | HMAC-signed receipts the agent cannot forge + live SSE feed |
+
+**Real-world surfaces.** Because injections arrive in documents, not textareas,
+Mission Control ingests an actual uploaded **PDF or email** (`/api/mission/extract`
+→ `ingest.py`), recovering even instructions hidden in HTML comments or email
+parts — the same content the model would consume — then proves the firewall
+holds the action. This directly reproduces the disclosed ChatGPT Atlas
+hidden-email-instruction case.
+
+**Honest scope.** This is an *instance* of a recognized category (policy engine /
+"AI firewall"), not a new idea — the research recommends exactly this category.
+The differentiation is packaging: action-layer enforcement (strip the call, not
+score the text), a zero-code-change OpenAI-compatible proxy, and signed receipts.
+Known gaps versus the checklist: no human-in-the-loop *approval* mode (we
+block/strip rather than pause for sign-off) and no OS-level sandbox.

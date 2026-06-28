@@ -41,7 +41,7 @@ function Shield() {
 export function Landing() {
   return (
     <SmoothScroll>
-      <BackgroundImageTexture variant="debut-light" opacity={0.4} className="lp">
+      <BackgroundImageTexture variant="debut-light" opacity={0.8} className="lp">
         <nav className="lp-nav">
           <span className="lp-brand">
             <span className="lp-brand-mark">
@@ -50,6 +50,7 @@ export function Landing() {
             Agent Firewall
           </span>
           <div className="lp-nav-right">
+            <a href="#evidence">Evidence</a>
             <a href="#how">How it works</a>
             <a href="#proof">Proof</a>
             <a href={GITHUB} target="_blank" rel="noreferrer">
@@ -61,18 +62,15 @@ export function Landing() {
               blur={false}
               className="size-9"
             />
-            <Link className="lp-cta" href="/console">
+            <LaunchButton href="/console" size="default">
               Launch console
-            </Link>
+            </LaunchButton>
           </div>
         </nav>
 
         {/* hero */}
         <header className="lp-hero">
           <div className="lp-hero-copy">
-            <span className="lp-pill">
-              <span className="lp-pill-dot" /> The operating layer for AI agents
-            </span>
             <h1 className="lp-h1">Guard every action your AI&nbsp;agents take.</h1>
             <p className="lp-lede">
               Prompt injection is unsolved. Guardrails check what the model <em>says</em> — Agent
@@ -126,6 +124,50 @@ export function Landing() {
               <span className="lp-tag good">Held</span>
             </article>
           </div>
+        </section>
+
+        {/* evidence — grounded in the threat research */}
+        <section className="lp-section lp-evidence" id="evidence">
+          <h2 className="lp-h2">This isn&apos;t hypothetical.</h2>
+          <p className="lp-sub">
+            The action layer is unguarded across the industry — and attackers are already through
+            it. The research is consistent: assume injection will succeed, and govern the action.
+          </p>
+          <div className="lp-evidence-grid">
+            <article className="lp-ev">
+              <div className="lp-ev-stat">88%</div>
+              <p className="lp-ev-body">
+                of organizations running AI agents reported a security incident — missing or
+                misconfigured guardrails a leading cause.
+              </p>
+              <span className="lp-ev-src mono">Gravitee AI security survey</span>
+            </article>
+            <article className="lp-ev">
+              <div className="lp-ev-stat">#1</div>
+              <p className="lp-ev-body">
+                Prompt injection is the top risk on the OWASP GenAI Top 10 (2025) — found in 73% of
+                production deployments reviewed.
+              </p>
+              <span className="lp-ev-src mono">OWASP GenAI Top 10 · 2025</span>
+            </article>
+            <article className="lp-ev">
+              <div className="lp-ev-stat lp-ev-stat--glyph">✉</div>
+              <p className="lp-ev-body">
+                OpenAI&apos;s ChatGPT Atlas was hijacked by a hidden instruction in an email — it
+                acted on the attacker&apos;s words instead of the user&apos;s task.
+              </p>
+              <span className="lp-ev-src mono">OpenAI Atlas red-team</span>
+            </article>
+          </div>
+          <p className="lp-evidence-foot">
+            Agent Firewall implements the controls these reports recommend — an external policy
+            engine, tool + argument allowlisting, output inspection, and a tamper-evident audit
+            trail — enforced at the action layer. Figures compiled in{" "}
+            <a href={`${GITHUB}/blob/main/docs/RESEARCH.md`} target="_blank" rel="noreferrer">
+              docs/RESEARCH.md
+            </a>
+            .
+          </p>
         </section>
 
         {/* how it works */}

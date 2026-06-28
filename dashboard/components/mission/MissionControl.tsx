@@ -1,15 +1,35 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { type ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { Header } from "@/components/Header";
+import { PolicyPanel } from "@/components/PolicyPanel";
+import { getPolicy } from "@/lib/api";
+import type { Policy } from "@/lib/types";
 import {
   type ExecutedAction,
+  type ExtractResult,
+  extractDocument,
+  extractSample,
   getScenarios,
   type MissionResult,
   type MissionStep,
   runMission,
   type Scenario,
 } from "@/lib/mission";
+
+interface SourceInfo {
+  filename: string;
+  kind: ExtractResult["kind"];
+  chars: number;
+  suspicious: boolean;
+  signals: string[];
+}
+
+const KIND_LABEL: Record<ExtractResult["kind"], string> = {
+  pdf: "PDF",
+  email: "Email",
+  text: "Text",
+};
 
 function fmtArgs(argsJson: string): string {
   try {
@@ -105,10 +125,14 @@ export function MissionControl() {
   const [doc, setDoc] = useState("");
   const [firewallOn, setFirewallOn] = useState(true);
   const [running, setRunning] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [source, setSource] = useState<SourceInfo | null>(null);
   const [result, setResult] = useState<MissionResult | null>(null);
   const [visible, setVisible] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [policy, setPolicy] = useState<Policy | null>(null);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     getScenarios()
@@ -121,16 +145,69 @@ export function MissionControl() {
         }
       })
       .catch(() => setError("Can't reach the firewall on :8000 — start it first."));
+
+    getPolicy()
+      .then(setPolicy)
+      .catch(() => setPolicy(null));
   }, []);
 
   const pickScenario = (id: string) => {
     const s = scenarios.find((x) => x.id === id);
     setScenarioId(id);
+    setSource(null);
     if (s) {
       setTask(s.task);
       setDoc(s.document);
     }
   };
+
+  const applyExtract = useCallback((r: ExtractResult) => {
+    setDoc(r.text);
+    setResult(null);
+    setSource({
+      filename: r.filename,
+      kind: r.kind,
+      chars: r.chars,
+      suspicious: r.suspicious,
+      signals: r.signals,
+    });
+  }, []);
+
+  const onFile = useCallback(
+    async (file: Blob, filename: string) => {
+      setUploading(true);
+      setError(null);
+      try {
+        applyExtract(await extractDocument(file, filename));
+      } catch {
+        setError("Couldn't read that file. Use a PDF, .eml, or .txt under 2 MB.");
+      } finally {
+        setUploading(false);
+      }
+    },
+    [applyExtract],
+  );
+
+  const onPick = (e: ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0];
+    if (f) void onFile(f, f.name);
+    e.target.value = ""; // allow re-selecting the same file
+  };
+
+  const loadSample = useCallback(
+    async (path: string, filename: string) => {
+      setUploading(true);
+      setError(null);
+      try {
+        applyExtract(await extractSample(path, filename));
+      } catch {
+        setError("Couldn't load the sample — is the firewall running on :8000?");
+      } finally {
+        setUploading(false);
+      }
+    },
+    [applyExtract],
+  );
 
   // reveal steps one at a time for a live feel
   useEffect(() => {
@@ -230,15 +307,66 @@ export function MissionControl() {
             <div className="panel-head" style={{ marginTop: 14 }}>
               <h2 className="panel-title">Knowledge source the agent will read</h2>
               <span className="mono" style={{ color: "var(--faint)" }}>
-                edit to plant an attack
+                upload a real file or edit to plant an attack
               </span>
             </div>
+
+            <div className="mc-ingest">
+              <button
+                type="button"
+                className="chip-btn"
+                onClick={() => fileInput.current?.click()}
+                disabled={running || uploading}
+              >
+                {uploading ? "Reading…" : "⬆ Upload PDF / email"}
+              </button>
+              <button
+                type="button"
+                className="chip-btn"
+                onClick={() => loadSample("/samples/invoice_poisoned.pdf", "invoice_poisoned.pdf")}
+                disabled={running || uploading}
+              >
+                Sample: poisoned invoice.pdf
+              </button>
+              <button
+                type="button"
+                className="chip-btn"
+                onClick={() => loadSample("/samples/vendor_email.eml", "vendor_email.eml")}
+                disabled={running || uploading}
+              >
+                Sample: vendor email.eml
+              </button>
+              <input
+                ref={fileInput}
+                type="file"
+                accept=".pdf,.eml,.txt,.md,.html,.htm"
+                onChange={onPick}
+                hidden
+              />
+            </div>
+
+            {source ? (
+              <div className={`mc-source ${source.suspicious ? "bad" : "ok"}`}>
+                <span className="mono mc-source-name">
+                  {KIND_LABEL[source.kind]} · {source.filename} · {source.chars} chars
+                </span>
+                {source.suspicious ? (
+                  <span className="mc-source-warn">
+                    ⚠ {source.signals.length} injection signal
+                    {source.signals.length === 1 ? "" : "s"} found in this file
+                  </span>
+                ) : (
+                  <span className="mc-source-ok">no obvious injection signal</span>
+                )}
+              </div>
+            ) : null}
+
             <textarea
               className="mc-input mc-doc"
               rows={7}
               value={doc}
               onChange={(e) => setDoc(e.target.value)}
-              disabled={running}
+              disabled={running || uploading}
             />
           </div>
 
@@ -276,6 +404,7 @@ export function MissionControl() {
 
         <aside className="mc-right">
           {result && done ? <Verdict result={result} /> : null}
+          <PolicyPanel policy={policy} onPolicyUpdated={setPolicy} />
 
           <div className="panel">
             <div className="panel-head">
