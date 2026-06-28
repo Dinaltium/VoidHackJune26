@@ -1,8 +1,6 @@
 import json
 from typing import Any, Callable
 
-from openai import OpenAI
-
 from . import pii
 from .client import FirewallOpenAI
 from .policy import Policy, load_policy
@@ -35,6 +33,13 @@ def create_openai_compatible_firewall(
     resolved_base_url = base_url or OPENAI_COMPATIBLE_BASE_URLS.get(provider)
     if not resolved_base_url:
         raise ValueError(f"Unknown OpenAI-compatible provider: {provider}")
+    try:
+        from openai import OpenAI
+    except ImportError as exc:
+        raise ImportError(
+            "create_openai_compatible_firewall requires the OpenAI SDK. "
+            "Install with `pip install voidhack-agent-firewall[openai]`."
+        ) from exc
     raw = OpenAI(api_key=api_key, base_url=resolved_base_url, **client_kwargs)
     return FirewallOpenAI(raw, policy_path=policy_path)
 

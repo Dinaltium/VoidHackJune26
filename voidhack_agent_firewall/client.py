@@ -1,5 +1,4 @@
 from typing import Any, Dict
-from openai import OpenAI
 
 from . import pii
 from .policy import Policy, load_policy
@@ -112,7 +111,7 @@ class FirewallOpenAI:
     """Sleek drop-in client wrapper that adds policy controls to any OpenAI client in-process."""
     def __init__(
         self,
-        client: OpenAI,
+        client: Any,
         policy_path: str
     ):
         self._client = client

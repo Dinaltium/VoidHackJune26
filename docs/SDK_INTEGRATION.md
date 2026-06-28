@@ -22,6 +22,7 @@ pip install -e .
 pip install voidhack-agent-firewall
 
 # Optional integrations
+pip install "voidhack-agent-firewall[openai]"
 pip install "voidhack-agent-firewall[langchain]"
 pip install "voidhack-agent-firewall[anthropic]"
 pip install "voidhack-agent-firewall[gemini]"
