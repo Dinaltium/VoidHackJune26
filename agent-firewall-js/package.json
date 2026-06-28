@@ -13,7 +13,7 @@
     "voidhack-agent-firewall": "./bin/cli.js"
   },
   "files": [
-    "lib/",
+    "lib/*.js",
     "bin/",
     "templates/"
   ],

@@ -12,6 +12,8 @@ Works with:
 ## Quick Start (npx)
 
 ```bash
+npm install voidhack-agent-firewall
+
 # Scaffold a policy.yaml in your project
 npx voidhack-agent-firewall init
 
@@ -20,6 +22,14 @@ npx voidhack-agent-firewall check
 
 # Run the interactive demo
 npx voidhack-agent-firewall demo
+```
+
+Install only the provider SDKs you need:
+
+```bash
+npm install openai
+npm install @anthropic-ai/sdk
+npm install @google/generative-ai
 ```
 
 ## Library Usage

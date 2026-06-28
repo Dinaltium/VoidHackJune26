@@ -75,6 +75,18 @@ All models run on the **Groq free tier** — zero cost, no card.
 
 ## SDKs and provider adapters
 
+Install from npm:
+
+```bash
+npm install voidhack-agent-firewall
+```
+
+Install from PyPI once published:
+
+```bash
+pip install voidhack-agent-firewall
+```
+
 - **Python**: `FirewallOpenAI`, `FirewallAnthropic`, `FirewallGoogleGenerativeAI`,
   `FirewallCallbackHandler`, and `create_openai_compatible_firewall`.
 - **Node.js**: `FirewallOpenAI`, `FirewallAnthropic`,

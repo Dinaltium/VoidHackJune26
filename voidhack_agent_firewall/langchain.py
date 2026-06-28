@@ -1,13 +1,8 @@
-import os
-import sys
 from typing import Any, Dict, List, Optional
 
-# Add proxy directory to sys.path to access validation rules
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), "proxy"))
-
-from app.detect.rules import check_tool_calls  # type: ignore
-from app.schemas import ToolCall, Status  # type: ignore
-from app.policy import load_policy  # type: ignore
+from .policy import load_policy
+from .rules import check_tool_calls
+from .schemas import Status, ToolCall
 
 # Attempt to import LangChain's callback base class
 try:

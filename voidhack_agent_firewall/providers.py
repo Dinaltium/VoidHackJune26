@@ -1,18 +1,13 @@
 import json
-import os
-import sys
 from typing import Any, Callable
 
 from openai import OpenAI
 
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), "proxy"))
-
-from app.detect import pii  # type: ignore
-from app.detect.rules import check_tool_calls  # type: ignore
-from app.policy import Policy, load_policy  # type: ignore
-from app.schemas import Status, ToolCall  # type: ignore
-
+from . import pii
 from .client import FirewallOpenAI
+from .policy import Policy, load_policy
+from .rules import check_tool_calls
+from .schemas import Status, ToolCall
 
 OPENAI_COMPATIBLE_BASE_URLS: dict[str, str] = {
     "openai": "https://api.openai.com/v1",

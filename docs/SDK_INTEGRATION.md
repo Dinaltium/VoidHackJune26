@@ -15,8 +15,17 @@ The policy engine is provider-agnostic. There are three integration modes:
 ### Installation
 Install the SDK package into your Python environment:
 ```bash
-# From local package source
-pip install -e ./voidhack_agent_firewall
+# From this repository
+pip install -e .
+
+# After PyPI publication
+pip install voidhack-agent-firewall
+
+# Optional integrations
+pip install "voidhack-agent-firewall[langchain]"
+pip install "voidhack-agent-firewall[anthropic]"
+pip install "voidhack-agent-firewall[gemini]"
+pip install "voidhack-agent-firewall[all]"
 ```
 
 ### Integration (Code Wrapper)
@@ -136,10 +145,22 @@ response = client.chat.completions.create(
 ## 2. Node.js / NPX CLI (`voidhack-agent-firewall`)
 
 ### Installation & Execution
-You can run the firewall proxy directly via NPX or install the library:
+Install the library from npm:
 ```bash
-# Run the proxy locally
-npx voidhack-agent-firewall --port 8000
+npm install voidhack-agent-firewall
+
+# Optional provider SDKs depending on what you use
+npm install openai
+npm install @anthropic-ai/sdk
+npm install @google/generative-ai
+```
+
+The package also includes a CLI for policy scaffolding and local demos:
+
+```bash
+npx voidhack-agent-firewall init
+npx voidhack-agent-firewall check
+npx voidhack-agent-firewall demo
 ```
 
 ### Integration (Code Wrapper)

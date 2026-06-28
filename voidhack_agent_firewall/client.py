@@ -1,15 +1,10 @@
-import os
-import sys
 from typing import Any, Dict
 from openai import OpenAI
 
-# Add proxy directory to sys.path to access validation rules
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), "proxy"))
-
-from app.policy import load_policy, Policy  # type: ignore
-from app.detect.rules import check_tool_calls  # type: ignore
-from app.detect import pii  # type: ignore
-from app.schemas import Status, ToolCall  # type: ignore
+from . import pii
+from .policy import Policy, load_policy
+from .rules import check_tool_calls
+from .schemas import Status, ToolCall
 
 class CompletionsWrapper:
     def __init__(self, original_completions: Any, policy: Policy):
