@@ -3,7 +3,7 @@
 ## Components
 
 ```
-agent ──OpenAI API──► Firewall proxy (FastAPI) ──► Upstream LLM (Groq)
+agent ──OpenAI API──► Defender proxy (FastAPI) ──► Upstream LLM (Groq)
                           │  inspection engine
                           │   ├─ deterministic rules   (tool/egress/secret)
                           │   ├─ injection scan         (heuristic + Prompt Guard 2)
@@ -50,7 +50,7 @@ agent ──OpenAI API──► Firewall proxy (FastAPI) ──► Upstream LLM 
 
 The agent executes whatever tool calls the **model** emits. By removing a
 disallowed `tool_call` from the model's response before it reaches the agent,
-the firewall prevents the action rather than merely warning about it. Default
+the defender prevents the action rather than merely warning about it. Default
 posture is **fail-closed**.
 
 ## Degradation

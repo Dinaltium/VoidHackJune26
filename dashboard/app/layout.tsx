@@ -14,9 +14,9 @@ const display = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Agent Firewall — the control plane for AI agents",
+  title: "Agent Defender — the control plane for AI agents",
   description:
-    "Action-layer policy enforcement for AI agents. Guardrails check what the model says — Agent Firewall checks what the agent does.",
+    "Action-layer policy enforcement for AI agents. Guardrails check what the model says — Agent Defender checks what the agent does.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

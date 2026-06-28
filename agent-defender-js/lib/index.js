@@ -1,5 +1,5 @@
 /**
- * agent-firewall — public API
+ * agent-defender — public API
  */
 
 export { Policy, loadPolicy } from "./policy.js";

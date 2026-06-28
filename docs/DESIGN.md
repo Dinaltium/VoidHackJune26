@@ -1,4 +1,4 @@
-# Agent Firewall — Design & Decision Log
+# Agent Defender — Design & Decision Log
 
 > VoidHack June 2026 · Theme: *The Operating Layer of the Internet*
 

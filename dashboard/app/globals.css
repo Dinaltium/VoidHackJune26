@@ -4,7 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ---------------------------------------------------------------- tokens -- */
-/* Agent Firewall — light primary + dark. Brand = OXBLOOD (deep burgundy).
+/* Agent Defender — light primary + dark. Brand = OXBLOOD (deep burgundy).
    Neutrals are warm-graphite. green/amber/red stay reserved for the
    allow / flag / block decision states. shadcn tokens + design-system aliases
    share one source of truth so the whole app re-themes by swapping these. */

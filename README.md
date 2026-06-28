@@ -1,4 +1,4 @@
-# Agent Firewall
+# Agent Defender
 
 > The operating layer that guards what AI agents actually **do**.
 >
@@ -22,7 +22,7 @@ provider.
 
 Prompt injection is unsolved (OWASP LLM01:2025). Existing guardrails classify
 *text* and approve the words — then the agent emails your secrets in the next
-call. The firewall enforces at the layer where damage happens: **the action**.
+call. The defender enforces at the layer where damage happens: **the action**.
 
 It blocks by **stripping the disallowed `tool_call` out of the model's response
 before the agent ever sees it** — prevention, not a warning. Default **fail-closed**.
@@ -45,7 +45,7 @@ before the agent ever sees it** — prevention, not a warning. Default **fail-cl
 # BREACH — agent talks straight to the model; it emails data externally
 python -m agent.run_attack --task email --direct
 
-# SAFE — same task through the firewall; send_email is blocked, 0 exfiltration
+# SAFE — same task through the defender; send_email is blocked, 0 exfiltration
 python -m agent.run_attack --task email
 ```
 
@@ -55,9 +55,9 @@ spread of attacks through the real engine. See [docs/RUNBOOK.md](docs/RUNBOOK.md
 ### Mission Control (`/mission`)
 
 An interactive page where you hand an autonomous agent a real goal (editable task
-+ a knowledge document you can poison), toggle the **firewall ON/OFF**, and watch
++ a knowledge document you can poison), toggle the **defender ON/OFF**, and watch
 a **live LLM** execute step by step. Governed: the agent gets hijacked but every
-dangerous call is stripped — *"Firewall held."* Ungoverned: the same agent
+dangerous call is stripped — *"Defender held."* Ungoverned: the same agent
 exfiltrates — *"Breach."* An Impact panel proves what reached the outside world.
 
 ## Stack
@@ -78,13 +78,13 @@ All models run on the **Groq free tier** — zero cost, no card.
 Install from npm:
 
 ```bash
-npm install voidhack-agent-firewall
+npm install voidhack-agent-defender
 ```
 
 Install from PyPI once published:
 
 ```bash
-pip install voidhack-agent-firewall
+pip install voidhack-agent-defender
 ```
 
 - **Python**: `FirewallOpenAI`, `FirewallAnthropic`, `FirewallGoogleGenerativeAI`,
@@ -99,7 +99,7 @@ Groq, NVIDIA, Mistral, Together, and LangChain examples.
 ## Layout
 
 ```
-proxy/        FastAPI firewall (app/ + tests/)
+proxy/        FastAPI defender (app/ + tests/)
 dashboard/    Next.js 16 control-plane UI
 agent/        demo victim agent + poisoned document
 policies/     policy.yaml

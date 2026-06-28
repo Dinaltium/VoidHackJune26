@@ -1,5 +1,5 @@
 [project]
-name = "agent-firewall"
+name = "agent-defender"
 version = "0.1.0"
 description = "Action-layer policy proxy for AI agents — VoidHack June 2026"
 requires-python = ">=3.12"

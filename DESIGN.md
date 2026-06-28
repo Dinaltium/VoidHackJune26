@@ -1,6 +1,6 @@
 # Design
 
-Visual system for Agent Firewall. Source of truth: `dashboard/app/globals.css`
+Visual system for Agent Defender. Source of truth: `dashboard/app/globals.css`
 (OKLCH tokens). Identity to preserve: a dark, calm control-plane where saturated
 color appears only to encode a decision.
 

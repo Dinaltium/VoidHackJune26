@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { BackgroundImageTexture } from "@/components/ui/bg-image-texture";
 import { ThemeToggleButton } from "@/components/ui/skiper-ui/skiper26";
-import { HeroFirewall } from "./HeroFirewall";
+import { HeroDefender } from "./HeroDefender";
 import { LaunchButton } from "./LaunchButton";
 import { RevealSection } from "./RevealSection";
 import { SmoothScroll } from "./SmoothScroll";
@@ -47,7 +47,7 @@ export function Landing() {
             <span className="lp-brand-mark">
               <Shield />
             </span>
-            Agent Firewall
+            Agent Defender
           </span>
           <div className="lp-nav-right">
             <a href="#evidence">Evidence</a>
@@ -74,7 +74,7 @@ export function Landing() {
             <h1 className="lp-h1">Guard every action your AI&nbsp;agents take.</h1>
             <p className="lp-lede">
               Prompt injection is unsolved. Guardrails check what the model <em>says</em> — Agent
-              Firewall checks what the agent <em>does</em>, and strips the dangerous calls before
+              Defender checks what the agent <em>does</em>, and strips the dangerous calls before
               they run.
             </p>
             <div className="lp-actions">
@@ -85,7 +85,7 @@ export function Landing() {
             </div>
           </div>
           <div className="lp-hero-art">
-            <HeroFirewall />
+            <HeroDefender />
           </div>
         </header>
 
@@ -104,7 +104,7 @@ export function Landing() {
           <h2 className="lp-h2">Guardrails read text. Damage happens in actions.</h2>
           <p className="lp-sub">
             A classifier can approve a prompt and still let the agent exfiltrate a secret in the
-            very next call. The action is where the firewall lives.
+            very next call. The action is where the defender lives.
           </p>
           <div className="lp-versus">
             <article className="lp-vs lp-vs--bad">
@@ -116,7 +116,7 @@ export function Landing() {
               <span className="lp-tag bad">Breach</span>
             </article>
             <article className="lp-vs lp-vs--good">
-              <div className="lp-vs-head">Agent Firewall</div>
+              <div className="lp-vs-head">Agent Defender</div>
               <ol>
                 <li>Inspects the action the model emitted</li>
                 <li className="good">Strips send_email before the agent can run it</li>
@@ -160,7 +160,7 @@ export function Landing() {
             </article>
           </div>
           <p className="lp-evidence-foot">
-            Agent Firewall implements the controls these reports recommend — an external policy
+            Agent Defender implements the controls these reports recommend — an external policy
             engine, tool + argument allowlisting, output inspection, and a tamper-evident audit
             trail — enforced at the action layer. Figures compiled in{" "}
             <a href={`${GITHUB}/blob/main/docs/RESEARCH.md`} target="_blank" rel="noreferrer">
@@ -174,7 +174,7 @@ export function Landing() {
         <section className="lp-section" id="how">
           <h2 className="lp-h2">One base_url. Every action checked.</h2>
           <p className="lp-sub">
-            Point your agent at the firewall — nothing else changes. Each tool call runs a
+            Point your agent at the defender — nothing else changes. Each tool call runs a
             deterministic-first pipeline; the model-backed layers light up only when they need to.
             Fail-closed by default.
           </p>
@@ -195,7 +195,7 @@ export function Landing() {
               OpenAI
               {"\n"}
               client = OpenAI(base_url=
-              <span className="c-str">&quot;https://your-firewall/v1&quot;</span>){"\n"}
+              <span className="c-str">&quot;https://your-defender/v1&quot;</span>){"\n"}
               <span className="c-com"># every tool call the agent makes is now governed</span>
             </code>
           </pre>
@@ -206,24 +206,24 @@ export function Landing() {
           <h2 className="lp-h2">Watch an agent get hijacked — and held.</h2>
           <p className="lp-sub">
             Mission Control runs a real LLM against a poisoned document. The model takes the bait;
-            the firewall strips every dangerous call and signs the decision. Toggle it off to watch
+            the defender strips every dangerous call and signs the decision. Toggle it off to watch
             the same agent breach.
           </p>
           <div className="lp-shots">
             <figure>
               <Image
                 src="/shots/mission.png"
-                alt="Mission Control showing the firewall blocking three send_email attempts with a 'Firewall held' verdict"
+                alt="Mission Control showing the defender blocking three send_email attempts with a 'Firewall held' verdict"
                 width={1440}
                 height={900}
                 sizes="(max-width: 820px) 100vw, 50vw"
               />
-              <figcaption>Mission Control — agent hijacked, firewall held.</figcaption>
+              <figcaption>Mission Control — agent hijacked, defender held.</figcaption>
             </figure>
             <figure>
               <Image
                 src="/shots/console.png"
-                alt="Live feed dashboard streaming blocked, redacted, and flagged firewall decisions"
+                alt="Live feed dashboard streaming blocked, redacted, and flagged defender decisions"
                 width={1440}
                 height={900}
                 sizes="(max-width: 820px) 100vw, 50vw"
@@ -267,7 +267,7 @@ export function Landing() {
         <RevealSection
           length={1.1}
           parts={[
-            "Most people only see interfaces. The firewall is the",
+            "Most people only see interfaces. The defender is the",
             { text: "invisible operating layer", block: "var(--brand)", color: "var(--brand)" },
             "that decides what every agent is allowed to do.",
           ]}
@@ -285,7 +285,7 @@ export function Landing() {
         </section>
 
         <footer className="lp-footer">
-          <span>Agent Firewall</span>
+          <span>Agent Defender</span>
           <span className="mono">VoidHack June 2026 · The Operating Layer of the Internet</span>
         </footer>
       </BackgroundImageTexture>

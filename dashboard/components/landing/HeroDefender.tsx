@@ -62,7 +62,7 @@ const SCENARIOS: Scenario[] = [
   }
 ];
 
-export function HeroFirewall() {
+export function HeroDefender() {
   const [activeIdx, setActiveIdx] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [progress, setProgress] = useState(0);

@@ -63,7 +63,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         await app.state.client.aclose()
 
 
-app = FastAPI(title="Agent Firewall", version="0.1.0", lifespan=lifespan)
+app = FastAPI(title="Agent Defender", version="0.1.0", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # demo; tighten via settings.cors_origins in prod

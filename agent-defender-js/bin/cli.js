@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
 /**
- * voidhack-agent-firewall CLI
+ * voidhack-agent-defender CLI
  *
  * Usage:
- *   npx voidhack-agent-firewall init          — scaffold a starter policy.yaml
- *   npx voidhack-agent-firewall demo          — run an interactive demo
- *   npx voidhack-agent-firewall check <file>  — validate a policy file
+ *   npx voidhack-agent-defender init          — scaffold a starter policy.yaml
+ *   npx voidhack-agent-defender demo          — run an interactive demo
+ *   npx voidhack-agent-defender check <file>  — validate a policy file
  */
 
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
@@ -33,7 +33,7 @@ const BG_GREEN = "\x1b[42m";
 function banner() {
   console.log(`
 ${CYAN}${BOLD}    ╔══════════════════════════════════════════════╗
-    ║     ${MAGENTA}VOIDHACK AGENT FIREWALL${CYAN}  v1.0.0        ║
+    ║     ${MAGENTA}VOIDHACK AGENT DEFENDER${CYAN}  v1.0.0        ║
     ║   ${DIM}${CYAN}Drop-in security for AI agents${R}${CYAN}${BOLD}          ║
     ╚══════════════════════════════════════════════╝${R}
   `);
@@ -234,13 +234,13 @@ function cmdHelp() {
     ${CYAN}help${R}            Show this help message
   `);
   console.log(`  ${BOLD}Library usage (import):${R}
-    ${DIM}import { FirewallOpenAI } from "voidhack-agent-firewall";${R}
-    ${DIM}import { FirewallCallbackHandler } from "voidhack-agent-firewall/langchain";${R}
+    ${DIM}import { FirewallOpenAI } from "voidhack-agent-defender";${R}
+    ${DIM}import { FirewallCallbackHandler } from "voidhack-agent-defender/langchain";${R}
   `);
 }
 
 // ─── Fallback template ─────────────────────────────────────────────────
-const FALLBACK_TEMPLATE = `# Agent Firewall — policy.yaml
+const FALLBACK_TEMPLATE = `# Agent Defender — policy.yaml
 # Edit this file to define your agent's security boundaries.
 
 version: 1
@@ -292,7 +292,7 @@ injection_phrases:
 injection_threshold: 0.80
 token_budget_per_session: 20000
 fail_closed: true
-block_message: "[Agent Firewall] Action blocked by policy."
+block_message: "[Agent Defender] Action blocked by policy."
 `;
 
 // ─── Main ───────────────────────────────────────────────────────────────

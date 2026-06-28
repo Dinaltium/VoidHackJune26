@@ -1,6 +1,6 @@
-# Deployment Guide: Hosting VoidHack Agent Firewall
+# Deployment Guide: Hosting VoidHack Agent Defender
 
-To demonstrate the **VoidHack Agent Firewall** live to judges and record your walkthrough video, we recommend hosting the stack online. 
+To demonstrate the **VoidHack Agent Defender** live to judges and record your walkthrough video, we recommend hosting the stack online. 
 
 Here is the recommended blueprint: **Vercel** for the Next.js Dashboard and **Render** for the Python/FastAPI Backend.
 
@@ -8,13 +8,13 @@ Here is the recommended blueprint: **Vercel** for the Next.js Dashboard and **Re
 
 ## 1. Hosting the Backend (FastAPI Proxy) on Render
 
-Render's free tier is ideal for the Python FastAPI server because it supports persistent web sockets and Server-Sent Events (SSE), allowing the live firewall decision feed to stream in real-time.
+Render's free tier is ideal for the Python FastAPI server because it supports persistent web sockets and Server-Sent Events (SSE), allowing the live defender decision feed to stream in real-time.
 
 ### Step-by-Step Render Deployment:
 1. Log in to [Render](https://render.com) and click **New > Web Service**.
 2. Connect your GitHub repository: `Dinaltium/VoidHackJune26`.
 3. Configure the Web Service settings:
-   - **Name**: `voidhack-firewall-backend`
+   - **Name**: `voidhack-defender-backend`
    - **Language**: `Python 3`
    - **Build Command**: `pip install -r proxy/requirements.txt`
    - **Start Command**: `python -m uvicorn app.main:app --app-dir proxy --host 0.0.0.0 --port 10000`
@@ -39,7 +39,7 @@ Vercel is the native platform for Next.js, handling automatic builds, static opt
    - **Root Directory**: Select `dashboard` (crucial, since the Next.js app sits inside the `dashboard/` subfolder).
    - **Framework Preset**: `Next.js` (automatically detected).
 4. Expand **Environment Variables** and add:
-   - `NEXT_PUBLIC_API_URL`: Set this to your Render backend URL (e.g., `https://voidhack-firewall-backend.onrender.com`).
+   - `NEXT_PUBLIC_API_URL`: Set this to your Render backend URL (e.g., `https://voidhack-defender-backend.onrender.com`).
 5. Click **Deploy**. Vercel will build and launch your dashboard.
 
 ---

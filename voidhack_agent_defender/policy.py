@@ -43,7 +43,7 @@ class Policy:
     injection_threshold: float = 0.80
     token_budget_per_session: int = 20000
     fail_closed: bool = True
-    block_message: str = "[Agent Firewall] Action blocked by policy."
+    block_message: str = "[Agent Defender] Action blocked by policy."
 
     def tool_allowed(self, name: str) -> bool:
         if name in self.tool_denylist:
@@ -93,6 +93,6 @@ def load_policy(path: str | Path) -> Policy:
         token_budget_per_session=int(raw.get("token_budget_per_session", 20000)),
         fail_closed=bool(raw.get("fail_closed", True)),
         block_message=str(
-            raw.get("block_message", "[Agent Firewall] Action blocked by policy.")
+            raw.get("block_message", "[Agent Defender] Action blocked by policy.")
         ),
     )

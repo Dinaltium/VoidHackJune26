@@ -3,19 +3,19 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "voidhack-agent-firewall"
+name = "voidhack-agent-defender"
 version = "1.0.0"
-description = "Provider-agnostic action firewall SDK for AI agents"
+description = "Provider-agnostic action defender SDK for AI agents"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [
-  { name = "VoidHack Agent Firewall" }
+  { name = "VoidHack Agent Defender" }
 ]
 keywords = [
   "ai",
   "agents",
-  "firewall",
+  "defender",
   "guardrails",
   "prompt-injection",
   "langchain",

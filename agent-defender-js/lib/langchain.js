@@ -3,7 +3,7 @@
  * unauthorized actions before they run.
  *
  * Usage:
- *   import { FirewallCallbackHandler } from "voidhack-agent-firewall/langchain";
+ *   import { FirewallCallbackHandler } from "voidhack-agent-defender/langchain";
  *
  *   const handler = new FirewallCallbackHandler({ policyPath: "policy.yaml" });
  *   const executor = AgentExecutor.fromAgentAndTools({

@@ -49,7 +49,7 @@ const DEFAULTS = {
   injection_threshold: 0.8,
   token_budget_per_session: 20000,
   fail_closed: true,
-  block_message: "[Agent Firewall] Action blocked by policy.",
+  block_message: "[Agent Defender] Action blocked by policy.",
 };
 
 /**

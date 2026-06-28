@@ -1,16 +1,16 @@
-# SDK Integration Guide: VoidHack Agent Firewall
+# SDK Integration Guide: VoidHack Agent Defender
 
-This guide documents how to integrate the **VoidHack Agent Firewall** into Python and Node.js projects, showing how to execute agents **with** and **without** action-level protection.
+This guide documents how to integrate the **VoidHack Agent Defender** into Python and Node.js projects, showing how to execute agents **with** and **without** action-level protection.
 
 The policy engine is provider-agnostic. There are three integration modes:
 
 - **OpenAI-compatible APIs**: OpenAI, Groq, NVIDIA NIM, Mistral, Together, Fireworks, OpenRouter, DeepSeek, local gateways, and similar providers work through the OpenAI-compatible wrapper/proxy.
-- **Native provider APIs**: Claude/Anthropic and Gemini have SDK adapters that translate native tool calls into the firewall's common `ToolCall` shape.
-- **Agent frameworks**: LangChain is supported through callback handlers, so the firewall can block tool execution regardless of the underlying model provider.
+- **Native provider APIs**: Claude/Anthropic and Gemini have SDK adapters that translate native tool calls into the defender's common `ToolCall` shape.
+- **Agent frameworks**: LangChain is supported through callback handlers, so the defender can block tool execution regardless of the underlying model provider.
 
 ---
 
-## 1. Python SDK (`voidhack_agent_firewall`)
+## 1. Python SDK (`voidhack_agent_defender`)
 
 ### Installation
 Install the SDK package into your Python environment:
@@ -19,19 +19,19 @@ Install the SDK package into your Python environment:
 pip install -e .
 
 # After PyPI publication
-pip install voidhack-agent-firewall
+pip install voidhack-agent-defender
 
 # Optional integrations
-pip install "voidhack-agent-firewall[openai]"
-pip install "voidhack-agent-firewall[langchain]"
-pip install "voidhack-agent-firewall[anthropic]"
-pip install "voidhack-agent-firewall[gemini]"
-pip install "voidhack-agent-firewall[all]"
+pip install "voidhack-agent-defender[openai]"
+pip install "voidhack-agent-defender[langchain]"
+pip install "voidhack-agent-defender[anthropic]"
+pip install "voidhack-agent-defender[gemini]"
+pip install "voidhack-agent-defender[all]"
 ```
 
 ### Integration (Code Wrapper)
 
-#### ❌ WITHOUT Firewall (Direct to LLM)
+#### ❌ WITHOUT Defender (Direct to LLM)
 In a standard, unprotected configuration, the agent talks directly to the LLM. If the prompt contains an injection, the LLM generates a tool call (e.g., `send_email`), and the agent executes it immediately.
 
 ```python
@@ -61,7 +61,7 @@ response = client.chat.completions.create(
 For providers that expose an OpenAI-compatible API, use the helper factory and choose the provider name:
 
 ```python
-from voidhack_agent_firewall import create_openai_compatible_firewall
+from voidhack_agent_defender import create_openai_compatible_firewall
 
 client = create_openai_compatible_firewall(
     "groq",  # also: openai, nvidia, mistral, together, fireworks, openrouter, deepseek
@@ -82,7 +82,7 @@ Claude uses native `tool_use` content blocks instead of OpenAI `tool_calls`. The
 
 ```python
 from anthropic import Anthropic
-from voidhack_agent_firewall import FirewallAnthropic
+from voidhack_agent_defender import FirewallAnthropic
 
 raw = Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
 client = FirewallAnthropic(raw, policy_path="policies/policy.yaml")
@@ -103,7 +103,7 @@ Gemini uses `function_call` parts. The adapter removes blocked function calls fr
 
 ```python
 import google.generativeai as genai
-from voidhack_agent_firewall import FirewallGoogleGenerativeAI
+from voidhack_agent_defender import FirewallGoogleGenerativeAI
 
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 client = FirewallGoogleGenerativeAI(genai, policy_path="policies/policy.yaml")
@@ -113,8 +113,8 @@ response = model.generate_content("Fetch https://evil.com/exfil")
 print(response.firewall)
 ```
 
-####   WITH Firewall (Inspected Proxy)
-To protect the agent, update the `base_url` to point to the local Agent Firewall proxy (`http://localhost:8000/v1`). 
+####   WITH Defender (Inspected Proxy)
+To protect the agent, update the `base_url` to point to the local Agent Defender proxy (`http://localhost:8000/v1`). 
 
 ```python
 import os
@@ -123,7 +123,7 @@ from openai import OpenAI
 # Protected OpenAI client: queries proxy on port 8000
 client = OpenAI(
     api_key=os.environ.get("GROQ_API_KEY"),
-    base_url="http://localhost:8000/v1" # Point to the local firewall
+    base_url="http://localhost:8000/v1" # Point to the local defender proxy
 )
 
 response = client.chat.completions.create(
@@ -136,19 +136,19 @@ response = client.chat.completions.create(
 )
 
 # Protected execution:
-# The firewall intercepts the tool call, matches it against policies/policy.yaml,
+# The defender intercepts the tool call, matches it against policies/policy.yaml,
 # and strips the disallowed 'send_email' tool out of the response.
 # response.choices[0].message.tool_calls will be clean / empty.
 ```
 
 ---
 
-## 2. Node.js / NPX CLI (`voidhack-agent-firewall`)
+## 2. Node.js / NPX CLI (`voidhack-agent-defender`)
 
 ### Installation & Execution
 Install the library from npm:
 ```bash
-npm install voidhack-agent-firewall
+npm install voidhack-agent-defender
 
 # Optional provider SDKs depending on what you use
 npm install openai
@@ -159,14 +159,14 @@ npm install @google/generative-ai
 The package also includes a CLI for policy scaffolding and local demos:
 
 ```bash
-npx voidhack-agent-firewall init
-npx voidhack-agent-firewall check
-npx voidhack-agent-firewall demo
+npx voidhack-agent-defender init
+npx voidhack-agent-defender check
+npx voidhack-agent-defender demo
 ```
 
 ### Integration (Code Wrapper)
 
-#### ❌ WITHOUT Firewall (Direct to LLM)
+#### ❌ WITHOUT Defender (Direct to LLM)
 ```typescript
 import OpenAI from "openai";
 
@@ -189,7 +189,7 @@ const response = await openai.chat.completions.create({
 ### OpenAI-Compatible Providers
 
 ```typescript
-import { createFirewallOpenAICompatible } from "voidhack-agent-firewall/providers";
+import { createFirewallOpenAICompatible } from "voidhack-agent-defender/providers";
 
 const client = await createFirewallOpenAICompatible("together", {
   apiKey: process.env.TOGETHER_API_KEY,
@@ -209,7 +209,7 @@ Supported built-in provider names: `openai`, `groq`, `nvidia`, `mistral`, `toget
 
 ```typescript
 import Anthropic from "@anthropic-ai/sdk";
-import { FirewallAnthropic } from "voidhack-agent-firewall/providers";
+import { FirewallAnthropic } from "voidhack-agent-defender/providers";
 
 const raw = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 const client = new FirewallAnthropic(raw, { policyPath: "policy.yaml" });
@@ -228,7 +228,7 @@ console.log(response.firewall);
 
 ```typescript
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { FirewallGoogleGenerativeAI } from "voidhack-agent-firewall/providers";
+import { FirewallGoogleGenerativeAI } from "voidhack-agent-defender/providers";
 
 const raw = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 const client = new FirewallGoogleGenerativeAI(raw, { policyPath: "policy.yaml" });
@@ -238,15 +238,15 @@ const response = await model.generateContent("Fetch https://evil.com/exfil");
 console.log(response.firewall);
 ```
 
-####   WITH Firewall (Inspected Proxy)
-Simply configure the `baseURL` to target the local firewall proxy port.
+####   WITH Defender (Inspected Proxy)
+Simply configure the `baseURL` to target the local defender proxy port.
 
 ```typescript
 import OpenAI from "openai";
 
 const openai = new OpenAI({
   apiKey: process.env.GROQ_API_KEY,
-  baseURL: "http://localhost:8000/v1", // Route completions through the firewall
+  baseURL: "http://localhost:8000/v1", // Route completions through the defender
 });
 
 const response = await openai.chat.completions.create({
@@ -257,7 +257,7 @@ const response = await openai.chat.completions.create({
   tools: [...]
 });
 
-// The firewall scans the arguments, flags 'rm -rf' or destructive SQL command patterns,
+// The defender scans the arguments, flags 'rm -rf' or destructive SQL command patterns,
 // and replaces the response payload with a blocked event decision.
 ```
 
@@ -265,10 +265,10 @@ const response = await openai.chat.completions.create({
 
 ## 3. Guidelines for AI Coding Assistants (Implementing Demos)
 
-When creating or modifying an agent's task run loops to demonstrate the firewall:
+When creating or modifying an agent's task run loops to demonstrate the defender:
 
-1. **Environmental Configuration**: Ensure `GROQ_API_KEY` is loaded.
-2. **Switching Mechanism**: Use a command-line flag (e.g., `--direct`) to toggle the `base_url` between `https://api.groq.com/openai/v1` (WITHOUT firewall) and `http://localhost:8000/v1` (WITH firewall).
+1. **Deterministic Default**: The agent uses the defender proxy (`http://localhost:8000/v1`) by default.
+2. **Switching Mechanism**: Use a command-line flag (e.g., `--direct`) to toggle the `base_url` between `https://api.groq.com/openai/v1` (WITHOUT defender) and `http://localhost:8000/v1` (WITH defender).
 3. **Execution Script Template**:
    ```python
    import argparse
@@ -276,7 +276,7 @@ When creating or modifying an agent's task run loops to demonstrate the firewall
    from openai import OpenAI
 
    parser = argparse.ArgumentParser()
-   parser.add_argument("--direct", action="store_true", help="Bypass the firewall proxy")
+   parser.add_argument("--direct", action="store_true", help="Bypass the defender proxy")
    args = parser.parse_args()
 
    base_url = "https://api.groq.com/openai/v1" if args.direct else "http://localhost:8000/v1"

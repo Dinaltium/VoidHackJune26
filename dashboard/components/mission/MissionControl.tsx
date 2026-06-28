@@ -59,7 +59,7 @@ function Verdict({ result }: { result: MissionResult }) {
       <div className="verdict verdict--held">
         <span className="verdict-mark">🛡</span>
         <div>
-          <strong>Firewall held — {result.summary.blocked} action(s) blocked</strong>
+          <strong>Defender held — {result.summary.blocked} action(s) blocked</strong>
           <p>The agent was hijacked, but every dangerous call was stripped before it ran.</p>
         </div>
       </div>
@@ -144,7 +144,7 @@ export function MissionControl() {
           setDoc(s[0].document);
         }
       })
-      .catch(() => setError("Can't reach the firewall on :8000 — start it first."));
+      .catch(() => setError("Can't reach the defender on :8000 — start it first."));
 
     getPolicy()
       .then(setPolicy)
@@ -201,7 +201,7 @@ export function MissionControl() {
       try {
         applyExtract(await extractSample(path, filename));
       } catch {
-        setError("Couldn't load the sample — is the firewall running on :8000?");
+        setError("Couldn't load the sample — is the defender running on :8000?");
       } finally {
         setUploading(false);
       }
@@ -280,7 +280,7 @@ export function MissionControl() {
           <span className="switch-track">
             <span className="switch-thumb" />
           </span>
-          Firewall {firewallOn ? "ON" : "OFF"}
+          Defender {firewallOn ? "ON" : "OFF"}
         </button>
 
         <button type="button" className="btn btn--primary mc-run" onClick={run} disabled={running}>
@@ -383,7 +383,7 @@ export function MissionControl() {
               <div className="empty">
                 <div>
                   <strong>{running ? "Agent is working…" : "No run yet"}</strong>
-                  Pick a scenario, toggle the firewall, and run the agent to watch it act.
+                  Pick a scenario, toggle the defender, and run the agent to watch it act.
                 </div>
               </div>
             ) : (

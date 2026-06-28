@@ -5,10 +5,10 @@
 - Python 3.12 (conda env `firewall` recommended)
 - Node.js 20+
 - A free Groq API key in `.env` at the repo root: `GROQ_API_KEY=gsk_...`
-  (the firewall runs without it — the deterministic/heuristic layers work
+  (the defender runs without it — the deterministic/heuristic layers work
   offline — but the live agent demo and the model-backed layers need it.)
 
-## 1. Backend (firewall proxy)
+## 1. Backend (defender proxy)
 
 ```bash
 conda create -y -n firewall python=3.12        # once
@@ -31,10 +31,10 @@ Routes: `/` landing · `/console` live feed dashboard · `/mission` Mission Cont
 
 ## 3. Live demo
 
-With the firewall running on :8000:
+With the defender running on :8000:
 
 ```bash
-# Through the firewall — send_email is blocked, nothing exfiltrates
+# Through the defender — send_email is blocked, nothing exfiltrates
 conda run -n firewall python -m agent.run_attack --task email
 
 # Straight to the provider — the model emails data externally (the breach)
@@ -62,7 +62,7 @@ npx biome check .
 npx tsc --noEmit
 npm run build
 npx playwright install chromium    # once
-npx playwright test                # needs firewall on :8000 for the live test
+npx playwright test                # needs defender on :8000 for the live test
 ```
 
 ## Endpoints

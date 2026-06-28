@@ -24,7 +24,7 @@ export function Header({ active }: { active: "feed" | "mission" }) {
           </svg>
         </span>
         <div>
-          <h1>Agent Firewall</h1>
+          <h1>Agent Defender</h1>
           <p>The control plane that governs what your AI agents are allowed to do.</p>
         </div>
       </Link>

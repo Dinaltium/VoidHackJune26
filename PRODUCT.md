@@ -16,7 +16,7 @@ page and a demo video.
 
 ## Product Purpose
 
-Agent Firewall is the **action-layer control plane** that sits between an AI
+Agent Defender is the **action-layer control plane** that sits between an AI
 agent and the world and enforces policy on what the agent *does* — stripping
 disallowed tool calls before they execute, redacting secrets in flight, and
 signing every decision into an auditable trail. It exists because prompt
@@ -67,10 +67,10 @@ Interactive controls are keyboard-reachable with a visible focus ring.
 The design is grounded in the 2022–2026 prompt-injection survey in
 [`docs/RESEARCH.md`](docs/RESEARCH.md) (Gravitee, OWASP GenAI Top 10, Trail of
 Bits, Unit 42, disclosed CVEs). That report ends in a 12-item defense-in-depth
-checklist; Agent Firewall implements its core technical controls **as a drop-in
+checklist; Agent Defender implements its core technical controls **as a drop-in
 proxy** — the integration gap the report says almost nobody ships.
 
-| Research recommendation | In Agent Firewall |
+| Research recommendation | In Agent Defender |
 |---|---|
 | **Policy engine** ("grumpy compliance officer" / OPA) vets every action | Core — `policy.yaml` drives deterministic rules; the model never self-approves |
 | **Least privilege** | Tool allowlist + egress host allowlist |

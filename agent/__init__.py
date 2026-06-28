@@ -1,1 +1,1 @@
-"""Demo victim agent for the Agent Firewall."""
+"""Demo victim agent for the Agent Defender."""

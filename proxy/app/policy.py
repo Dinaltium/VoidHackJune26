@@ -48,7 +48,7 @@ class Policy(BaseModel):
     injection_threshold: float = 0.80
     token_budget_per_session: int = 20000
     fail_closed: bool = True
-    block_message: str = "[Agent Firewall] Action blocked by policy."
+    block_message: str = "[Agent Defender] Action blocked by policy."
 
     # ---- convenience ----
     def tool_allowed(self, name: str) -> bool:

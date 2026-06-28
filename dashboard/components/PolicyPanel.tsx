@@ -256,7 +256,7 @@ export function PolicyPanel({
       </div>
 
       {policy === null ? (
-        <p className="policy-desc">Policy unavailable — start the firewall on :8000.</p>
+        <p className="policy-desc">Policy unavailable — start the defender on :8000.</p>
       ) : (
         <>
           <p className="policy-desc">{policy.description}</p>

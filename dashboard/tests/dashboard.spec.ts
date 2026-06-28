@@ -10,17 +10,17 @@ test("landing page renders its hero and CTA", async ({ page }) => {
 
 test("renders the control-plane shell", async ({ page }) => {
   await page.goto("/console");
-  await expect(page.getByRole("heading", { name: "Agent Firewall" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Agent Defender" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Live activity" })).toBeVisible();
   await expect(page.getByRole("button", { name: /run demo attack/i })).toBeVisible();
 });
 
 test("mission control page renders its controls", async ({ page }) => {
   await page.goto("/mission");
-  await expect(page.getByRole("heading", { name: "Agent Firewall" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Agent Defender" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Execution" })).toBeVisible();
   await expect(page.getByRole("button", { name: /run agent/i })).toBeVisible();
-  await expect(page.getByRole("button", { name: /firewall (on|off)/i })).toBeVisible();
+  await expect(page.getByRole("button", { name: /defender (on|off)/i })).toBeVisible();
 });
 
 test("streams a blocked event when the demo runs", async ({ page, request }) => {

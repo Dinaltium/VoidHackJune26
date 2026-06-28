@@ -1,4 +1,4 @@
-# Agent Firewall — policy
+# Agent Defender — policy
 # Plain-English-ish, declarative. Hot-reloadable. Drives BOTH the deterministic
 # rules and the gpt-oss-safeguard reasoner (which reads `description` + lists).
 
@@ -91,5 +91,5 @@ injection_threshold: 0.80      # Prompt Guard 2 score above which we flag
 token_budget_per_session: 20000
 fail_closed: true              # detector error / uncertainty => block
 block_message: >
-  [Agent Firewall] This action was blocked by policy. A disallowed tool, an
+  [Agent Defender] This action was blocked by policy. A disallowed tool, an
   out-of-policy destination, or a secret leak was detected.
