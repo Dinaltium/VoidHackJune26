@@ -10,3 +10,11 @@ export {
   FirewallCallbackHandler,
   PolicyViolationError,
 } from "./langchain.js";
+export {
+  FirewallAnthropic,
+  FirewallGeminiModel,
+  FirewallGoogleGenerativeAI,
+  OPENAI_COMPATIBLE_BASE_URLS,
+  createFirewallOpenAICompatible,
+  openAICompatibleOptions,
+} from "./providers.js";

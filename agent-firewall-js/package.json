@@ -6,7 +6,8 @@
   "main": "./lib/index.js",
   "exports": {
     ".": "./lib/index.js",
-    "./langchain": "./lib/langchain.js"
+    "./langchain": "./lib/langchain.js",
+    "./providers": "./lib/providers.js"
   },
   "bin": {
     "voidhack-agent-firewall": "./bin/cli.js"
@@ -36,9 +37,17 @@
     "js-yaml": "^4.1.0"
   },
   "peerDependencies": {
+    "@anthropic-ai/sdk": ">=0.24.0",
+    "@google/generative-ai": ">=0.20.0",
     "openai": ">=4.0.0"
   },
   "peerDependenciesMeta": {
+    "@anthropic-ai/sdk": {
+      "optional": true
+    },
+    "@google/generative-ai": {
+      "optional": true
+    },
     "openai": {
       "optional": true
     }

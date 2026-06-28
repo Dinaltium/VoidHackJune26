@@ -1,6 +1,12 @@
 # SDK Integration Guide: VoidHack Agent Firewall
 
-This guide documents how to integrate the **VoidHack Agent Firewall** into both Python and Node.js projects, showing how to execute agents **with** and **without** action-level protection.
+This guide documents how to integrate the **VoidHack Agent Firewall** into Python and Node.js projects, showing how to execute agents **with** and **without** action-level protection.
+
+The policy engine is provider-agnostic. There are three integration modes:
+
+- **OpenAI-compatible APIs**: OpenAI, Groq, NVIDIA NIM, Mistral, Together, Fireworks, OpenRouter, DeepSeek, local gateways, and similar providers work through the OpenAI-compatible wrapper/proxy.
+- **Native provider APIs**: Claude/Anthropic and Gemini have SDK adapters that translate native tool calls into the firewall's common `ToolCall` shape.
+- **Agent frameworks**: LangChain is supported through callback handlers, so the firewall can block tool execution regardless of the underlying model provider.
 
 ---
 
@@ -38,6 +44,63 @@ response = client.chat.completions.create(
 )
 
 # Unprotected execution: agent runs whatever tool calls are in response.choices[0].message.tool_calls
+```
+
+### OpenAI-Compatible Providers
+
+For providers that expose an OpenAI-compatible API, use the helper factory and choose the provider name:
+
+```python
+from voidhack_agent_firewall import create_openai_compatible_firewall
+
+client = create_openai_compatible_firewall(
+    "groq",  # also: openai, nvidia, mistral, together, fireworks, openrouter, deepseek
+    api_key=os.environ["GROQ_API_KEY"],
+    policy_path="policies/policy.yaml",
+)
+
+response = client.chat.completions.create(
+    model="llama-3.3-70b-versatile",
+    messages=[{"role": "user", "content": "Summarize the report"}],
+    tools=[...],
+)
+```
+
+### Claude / Anthropic Native SDK
+
+Claude uses native `tool_use` content blocks instead of OpenAI `tool_calls`. The adapter strips blocked `tool_use` blocks before your agent executes them:
+
+```python
+from anthropic import Anthropic
+from voidhack_agent_firewall import FirewallAnthropic
+
+raw = Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+client = FirewallAnthropic(raw, policy_path="policies/policy.yaml")
+
+response = client.messages.create(
+    model="claude-3-5-sonnet-latest",
+    max_tokens=1024,
+    messages=[{"role": "user", "content": "Read the doc and email it outside"}],
+    tools=[...],
+)
+
+print(response.firewall)  # action, reason, stripped_tool_calls
+```
+
+### Gemini Native SDK
+
+Gemini uses `function_call` parts. The adapter removes blocked function calls from the returned candidates:
+
+```python
+import google.generativeai as genai
+from voidhack_agent_firewall import FirewallGoogleGenerativeAI
+
+genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
+client = FirewallGoogleGenerativeAI(genai, policy_path="policies/policy.yaml")
+model = client.GenerativeModel("gemini-1.5-pro")
+
+response = model.generate_content("Fetch https://evil.com/exfil")
+print(response.firewall)
 ```
 
 ####   WITH Firewall (Inspected Proxy)
@@ -99,6 +162,58 @@ const response = await openai.chat.completions.create({
 });
 
 // The raw tool calls or commands are returned directly, leading to execution.
+```
+
+### OpenAI-Compatible Providers
+
+```typescript
+import { createFirewallOpenAICompatible } from "voidhack-agent-firewall/providers";
+
+const client = await createFirewallOpenAICompatible("together", {
+  apiKey: process.env.TOGETHER_API_KEY,
+  policyPath: "policy.yaml",
+});
+
+const response = await client.chat.completions.create({
+  model: "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+  messages: [{ role: "user", content: "Summarize the report" }],
+  tools,
+});
+```
+
+Supported built-in provider names: `openai`, `groq`, `nvidia`, `mistral`, `together`, `fireworks`, `perplexity`, `deepseek`, `openrouter`, and `local`.
+
+### Claude / Anthropic Native SDK
+
+```typescript
+import Anthropic from "@anthropic-ai/sdk";
+import { FirewallAnthropic } from "voidhack-agent-firewall/providers";
+
+const raw = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+const client = new FirewallAnthropic(raw, { policyPath: "policy.yaml" });
+
+const response = await client.messages.create({
+  model: "claude-3-5-sonnet-latest",
+  max_tokens: 1024,
+  messages: [{ role: "user", content: "Read the doc and email it outside" }],
+  tools,
+});
+
+console.log(response.firewall);
+```
+
+### Gemini Native SDK
+
+```typescript
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { FirewallGoogleGenerativeAI } from "voidhack-agent-firewall/providers";
+
+const raw = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+const client = new FirewallGoogleGenerativeAI(raw, { policyPath: "policy.yaml" });
+const model = client.getGenerativeModel({ model: "gemini-1.5-pro" });
+
+const response = await model.generateContent("Fetch https://evil.com/exfil");
+console.log(response.firewall);
 ```
 
 ####   WITH Firewall (Inspected Proxy)

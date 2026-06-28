@@ -11,6 +11,13 @@ LLM/world and enforces **action-level** policy. Point your agent's `base_url` at
 it — nothing else changes — and every tool call, egress destination, secret, and
 token budget is checked before the agent can act.
 
+The enforcement engine is provider-agnostic: OpenAI-compatible providers
+(OpenAI, Groq, NVIDIA NIM, Mistral, Together, Fireworks, OpenRouter, local
+gateways) work through the proxy or SDK wrapper, while native Claude/Anthropic
+and Gemini adapters translate their tool-call formats into the same policy
+checks. LangChain integrations block tool execution regardless of the model
+provider.
+
 ## Why
 
 Prompt injection is unsolved (OWASP LLM01:2025). Existing guardrails classify
@@ -65,6 +72,17 @@ exfiltrates — *"Breach."* An Impact panel proves what reached the outside worl
 | Demo agent | OpenAI SDK · llama-3.3-70b-versatile |
 
 All models run on the **Groq free tier** — zero cost, no card.
+
+## SDKs and provider adapters
+
+- **Python**: `FirewallOpenAI`, `FirewallAnthropic`, `FirewallGoogleGenerativeAI`,
+  `FirewallCallbackHandler`, and `create_openai_compatible_firewall`.
+- **Node.js**: `FirewallOpenAI`, `FirewallAnthropic`,
+  `FirewallGoogleGenerativeAI`, LangChain.js callback support, and
+  `createFirewallOpenAICompatible`.
+
+See [docs/SDK_INTEGRATION.md](docs/SDK_INTEGRATION.md) for Claude, Gemini,
+Groq, NVIDIA, Mistral, Together, and LangChain examples.
 
 ## Layout
 

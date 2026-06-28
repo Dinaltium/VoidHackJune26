@@ -2,6 +2,13 @@
 
 Drop-in security guardrails for AI agents. Blocks unauthorized tool calls, data exfiltration, prompt injection, and secret leaks — **in-process, sub-millisecond, zero network**.
 
+Works with:
+
+- OpenAI-compatible APIs: OpenAI, Groq, NVIDIA NIM, Mistral, Together, Fireworks, OpenRouter, DeepSeek, local gateways
+- Claude / Anthropic native `tool_use` blocks
+- Gemini native `functionCall` parts
+- LangChain.js tool execution callbacks, independent of the model provider
+
 ## Quick Start (npx)
 
 ```bash
@@ -58,6 +65,58 @@ const executor = AgentExecutor.fromAgentAndTools({
 });
 
 // Unauthorized tool calls throw PolicyViolationError immediately
+```
+
+### OpenAI-Compatible Providers
+
+```js
+import { createFirewallOpenAICompatible } from "voidhack-agent-firewall/providers";
+
+const client = await createFirewallOpenAICompatible("groq", {
+  apiKey: process.env.GROQ_API_KEY,
+  policyPath: "policy.yaml",
+});
+
+const res = await client.chat.completions.create({
+  model: "llama-3.3-70b-versatile",
+  messages: [{ role: "user", content: "Summarize the report" }],
+  tools: myTools,
+});
+```
+
+Supported provider names: `openai`, `groq`, `nvidia`, `mistral`, `together`, `fireworks`, `perplexity`, `deepseek`, `openrouter`, and `local`.
+
+### Claude / Anthropic
+
+```js
+import Anthropic from "@anthropic-ai/sdk";
+import { FirewallAnthropic } from "voidhack-agent-firewall/providers";
+
+const raw = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+const client = new FirewallAnthropic(raw, { policyPath: "policy.yaml" });
+
+const res = await client.messages.create({
+  model: "claude-3-5-sonnet-latest",
+  max_tokens: 1024,
+  messages: [{ role: "user", content: "Read the doc and email it outside" }],
+  tools: myTools,
+});
+
+console.log(res.firewall);
+```
+
+### Gemini
+
+```js
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { FirewallGoogleGenerativeAI } from "voidhack-agent-firewall/providers";
+
+const raw = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+const client = new FirewallGoogleGenerativeAI(raw, { policyPath: "policy.yaml" });
+const model = client.getGenerativeModel({ model: "gemini-1.5-pro" });
+
+const res = await model.generateContent("Fetch https://evil.com/exfil");
+console.log(res.firewall);
 ```
 
 ### Standalone Rule Checks
