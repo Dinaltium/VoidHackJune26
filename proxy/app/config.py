@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 from pathlib import Path
+from typing import Any
 
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -22,7 +23,7 @@ class Settings(BaseSettings):
 
     @field_validator("cors_origins", mode="before")
     @classmethod
-    def parse_cors_origins(cls, v: any) -> list[str]:
+    def parse_cors_origins(cls, v: Any) -> list[str]:
         if isinstance(v, str):
             v = v.strip()
             if not v:
@@ -65,7 +66,7 @@ class Settings(BaseSettings):
     hmac_secret: str = "dev-insecure-change-me"  # signs receipts; override in prod
 
     # --- server ---
-    cors_origins: list[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
+    cors_origins: Any = ["http://localhost:3000", "http://127.0.0.1:3000"]
 
     @property
     def groq_enabled(self) -> bool:
