@@ -47,4 +47,4 @@ Homepage = "https://github.com/Dinaltium/VoidHackJune26"
 Repository = "https://github.com/Dinaltium/VoidHackJune26"
 
 [tool.setuptools.packages.find]
-include = ["voidhack_agent_firewall*"]
+include = ["voidhack_agent_defender*"]
