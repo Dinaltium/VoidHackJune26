@@ -3,7 +3,7 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "voidhack-agent-defender"
+name = "agent-defender"
 version = "1.0.0"
 description = "Provider-agnostic action defender SDK for AI agents"
 readme = "README.md"
@@ -47,4 +47,4 @@ Homepage = "https://github.com/Dinaltium/VoidHackJune26"
 Repository = "https://github.com/Dinaltium/VoidHackJune26"
 
 [tool.setuptools.packages.find]
-include = ["voidhack_agent_defender*"]
+include = ["agent_defender*"]

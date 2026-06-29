@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from voidhack_agent_defender.providers import (
+from agent_defender.providers import (
     FirewallAnthropic,
     FirewallGoogleGenerativeAI,
     OPENAI_COMPATIBLE_BASE_URLS,

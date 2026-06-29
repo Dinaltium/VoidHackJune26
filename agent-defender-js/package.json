@@ -1,5 +1,5 @@
 {
-  "name": "voidhack-agent-defender",
+  "name": "agent-defender",
   "version": "1.0.0",
   "description": "Drop-in security guardrails for AI agents. Blocks unauthorized tool calls, exfiltration, prompt injection, and secret leaks — in-process, sub-millisecond, zero network.",
   "type": "module",
@@ -10,7 +10,7 @@
     "./providers": "./lib/providers.js"
   },
   "bin": {
-    "voidhack-agent-defender": "./bin/cli.js"
+    "agent-defender": "./bin/cli.js"
   },
   "files": [
     "lib/*.js",

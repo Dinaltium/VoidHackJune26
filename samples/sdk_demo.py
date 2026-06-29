@@ -1,6 +1,6 @@
 """SDK Integration Demo.
 
-Demonstrates how to import and use the `agent_firewall` SDK in two ways:
+Demonstrates how to import and use the `agent_defender` SDK in two ways:
   1. Standalone client wrapper (FirewallOpenAI)
   2. LangChain Callback Handler (FirewallCallbackHandler)
 
@@ -14,8 +14,8 @@ from openai import OpenAI
 # Add project root to sys.path
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-from voidhack_agent_firewall import FirewallOpenAI, FirewallCallbackHandler
-from voidhack_agent_firewall.langchain import PolicyViolationError
+from agent_defender import FirewallOpenAI, FirewallCallbackHandler
+from agent_defender.langchain import PolicyViolationError
 
 # Path to the active policy configuration
 POLICY_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "policies", "policy.yaml")

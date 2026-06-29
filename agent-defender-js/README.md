@@ -1,4 +1,4 @@
-# voidhack-agent-defender
+# agent-defender
 
 Drop-in security guardrails for AI agents. Blocks unauthorized tool calls, data exfiltration, prompt injection, and secret leaks — **in-process, sub-millisecond, zero network**.
 
@@ -12,16 +12,16 @@ Works with:
 ## Quick Start (npx)
 
 ```bash
-npm install voidhack-agent-defender
+npm install agent-defender
 
 # Scaffold a policy.yaml in your project
-npx voidhack-agent-defender init
+npx agent-defender init
 
 # Validate your policy
-npx voidhack-agent-defender check
+npx agent-defender check
 
 # Run the interactive demo
-npx voidhack-agent-defender demo
+npx agent-defender demo
 ```
 
 Install only the provider SDKs you need:
@@ -38,7 +38,7 @@ npm install @google/generative-ai
 
 ```js
 import OpenAI from "openai";
-import { FirewallOpenAI } from "voidhack-agent-defender";
+import { FirewallOpenAI } from "agent-defender";
 
 const raw = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -61,7 +61,7 @@ console.log(res.firewall);
 ### LangChain.js Callback Handler
 
 ```js
-import { FirewallCallbackHandler } from "voidhack-agent-defender/langchain";
+import { FirewallCallbackHandler } from "agent-defender/langchain";
 
 const handler = new FirewallCallbackHandler({
   policyPath: "policy.yaml",
@@ -80,7 +80,7 @@ const executor = AgentExecutor.fromAgentAndTools({
 ### OpenAI-Compatible Providers
 
 ```js
-import { createFirewallOpenAICompatible } from "voidhack-agent-defender/providers";
+import { createFirewallOpenAICompatible } from "agent-defender/providers";
 
 const client = await createFirewallOpenAICompatible("groq", {
   apiKey: process.env.GROQ_API_KEY,
@@ -100,7 +100,7 @@ Supported provider names: `openai`, `groq`, `nvidia`, `mistral`, `together`, `fi
 
 ```js
 import Anthropic from "@anthropic-ai/sdk";
-import { FirewallAnthropic } from "voidhack-agent-defender/providers";
+import { FirewallAnthropic } from "agent-defender/providers";
 
 const raw = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 const client = new FirewallAnthropic(raw, { policyPath: "policy.yaml" });
@@ -119,7 +119,7 @@ console.log(res.firewall);
 
 ```js
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { FirewallGoogleGenerativeAI } from "voidhack-agent-defender/providers";
+import { FirewallGoogleGenerativeAI } from "agent-defender/providers";
 
 const raw = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 const client = new FirewallGoogleGenerativeAI(raw, { policyPath: "policy.yaml" });
@@ -132,7 +132,7 @@ console.log(res.firewall);
 ### Standalone Rule Checks
 
 ```js
-import { loadPolicy, checkToolCalls, scanAndRedact } from "voidhack-agent-defender";
+import { loadPolicy, checkToolCalls, scanAndRedact } from "agent-defender";
 
 const policy = loadPolicy("policy.yaml");
 

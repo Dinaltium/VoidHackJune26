@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
 /**
- * voidhack-agent-defender CLI
+ * agent-defender CLI
  *
  * Usage:
- *   npx voidhack-agent-defender init          — scaffold a starter policy.yaml
- *   npx voidhack-agent-defender demo          — run an interactive demo
- *   npx voidhack-agent-defender check <file>  — validate a policy file
+ *   npx agent-defender init          — scaffold a starter policy.yaml
+ *   npx agent-defender demo          — run an interactive demo
+ *   npx agent-defender check <file>  — validate a policy file
  */
 
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
@@ -33,7 +33,7 @@ const BG_GREEN = "\x1b[42m";
 function banner() {
   console.log(`
 ${CYAN}${BOLD}    ╔══════════════════════════════════════════════╗
-    ║     ${MAGENTA}VOIDHACK AGENT DEFENDER${CYAN}  v1.0.0        ║
+    ║           ${MAGENTA}AGENT DEFENDER${CYAN}  v1.0.0        ║
     ║   ${DIM}${CYAN}Drop-in security for AI agents${R}${CYAN}${BOLD}          ║
     ╚══════════════════════════════════════════════╝${R}
   `);
@@ -98,7 +98,7 @@ function cmdDemo() {
   let policyPath = candidates.find((p) => existsSync(resolve(p)));
   if (!policyPath) {
     console.log(
-      `  ${YELLOW}[!]${R} No policy.yaml found. Run ${BOLD}npx voidhack-agent-firewall init${R} first.\n`
+      `  ${YELLOW}[!]${R} No policy.yaml found. Run ${BOLD}npx agent-defender init${R} first.\n`
     );
     process.exit(1);
   }
@@ -234,8 +234,8 @@ function cmdHelp() {
     ${CYAN}help${R}            Show this help message
   `);
   console.log(`  ${BOLD}Library usage (import):${R}
-    ${DIM}import { FirewallOpenAI } from "voidhack-agent-defender";${R}
-    ${DIM}import { FirewallCallbackHandler } from "voidhack-agent-defender/langchain";${R}
+    ${DIM}import { FirewallOpenAI } from "agent-defender";${R}
+    ${DIM}import { FirewallCallbackHandler } from "agent-defender/langchain";${R}
   `);
 }
 

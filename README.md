@@ -78,13 +78,13 @@ All models run on the **Groq free tier** — zero cost, no card.
 Install from npm:
 
 ```bash
-npm install voidhack-agent-defender
+npm install agent-defender
 ```
 
 Install from PyPI once published:
 
 ```bash
-pip install voidhack-agent-defender
+pip install agent-defender
 ```
 
 - **Python**: `FirewallOpenAI`, `FirewallAnthropic`, `FirewallGoogleGenerativeAI`,

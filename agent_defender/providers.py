@@ -38,7 +38,7 @@ def create_openai_compatible_firewall(
     except ImportError as exc:
         raise ImportError(
             "create_openai_compatible_firewall requires the OpenAI SDK. "
-            "Install with `pip install voidhack-agent-firewall[openai]`."
+            "Install with `pip install agent-defender[openai]`."
         ) from exc
     raw = OpenAI(api_key=api_key, base_url=resolved_base_url, **client_kwargs)
     return FirewallOpenAI(raw, policy_path=policy_path)

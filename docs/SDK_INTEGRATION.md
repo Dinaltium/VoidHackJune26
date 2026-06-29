@@ -10,7 +10,7 @@ The policy engine is provider-agnostic. There are three integration modes:
 
 ---
 
-## 1. Python SDK (`voidhack_agent_defender`)
+## 1. Python SDK (`agent_defender`)
 
 ### Installation
 Install the SDK package into your Python environment:
@@ -19,14 +19,14 @@ Install the SDK package into your Python environment:
 pip install -e .
 
 # After PyPI publication
-pip install voidhack-agent-defender
+pip install agent-defender
 
 # Optional integrations
-pip install "voidhack-agent-defender[openai]"
-pip install "voidhack-agent-defender[langchain]"
-pip install "voidhack-agent-defender[anthropic]"
-pip install "voidhack-agent-defender[gemini]"
-pip install "voidhack-agent-defender[all]"
+pip install "agent-defender[openai]"
+pip install "agent-defender[langchain]"
+pip install "agent-defender[anthropic]"
+pip install "agent-defender[gemini]"
+pip install "agent-defender[all]"
 ```
 
 ### Integration (Code Wrapper)
@@ -61,7 +61,7 @@ response = client.chat.completions.create(
 For providers that expose an OpenAI-compatible API, use the helper factory and choose the provider name:
 
 ```python
-from voidhack_agent_defender import create_openai_compatible_firewall
+from agent_defender import create_openai_compatible_firewall
 
 client = create_openai_compatible_firewall(
     "groq",  # also: openai, nvidia, mistral, together, fireworks, openrouter, deepseek
@@ -82,7 +82,7 @@ Claude uses native `tool_use` content blocks instead of OpenAI `tool_calls`. The
 
 ```python
 from anthropic import Anthropic
-from voidhack_agent_defender import FirewallAnthropic
+from agent_defender import FirewallAnthropic
 
 raw = Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
 client = FirewallAnthropic(raw, policy_path="policies/policy.yaml")
@@ -103,7 +103,7 @@ Gemini uses `function_call` parts. The adapter removes blocked function calls fr
 
 ```python
 import google.generativeai as genai
-from voidhack_agent_defender import FirewallGoogleGenerativeAI
+from agent_defender import FirewallGoogleGenerativeAI
 
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 client = FirewallGoogleGenerativeAI(genai, policy_path="policies/policy.yaml")
@@ -143,12 +143,12 @@ response = client.chat.completions.create(
 
 ---
 
-## 2. Node.js / NPX CLI (`voidhack-agent-defender`)
+## 2. Node.js / NPX CLI (`agent-defender`)
 
 ### Installation & Execution
 Install the library from npm:
 ```bash
-npm install voidhack-agent-defender
+npm install agent-defender
 
 # Optional provider SDKs depending on what you use
 npm install openai
@@ -159,9 +159,9 @@ npm install @google/generative-ai
 The package also includes a CLI for policy scaffolding and local demos:
 
 ```bash
-npx voidhack-agent-defender init
-npx voidhack-agent-defender check
-npx voidhack-agent-defender demo
+npx agent-defender init
+npx agent-defender check
+npx agent-defender demo
 ```
 
 ### Integration (Code Wrapper)
@@ -189,7 +189,7 @@ const response = await openai.chat.completions.create({
 ### OpenAI-Compatible Providers
 
 ```typescript
-import { createFirewallOpenAICompatible } from "voidhack-agent-defender/providers";
+import { createFirewallOpenAICompatible } from "agent-defender/providers";
 
 const client = await createFirewallOpenAICompatible("together", {
   apiKey: process.env.TOGETHER_API_KEY,
@@ -209,7 +209,7 @@ Supported built-in provider names: `openai`, `groq`, `nvidia`, `mistral`, `toget
 
 ```typescript
 import Anthropic from "@anthropic-ai/sdk";
-import { FirewallAnthropic } from "voidhack-agent-defender/providers";
+import { FirewallAnthropic } from "agent-defender/providers";
 
 const raw = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 const client = new FirewallAnthropic(raw, { policyPath: "policy.yaml" });
@@ -228,7 +228,7 @@ console.log(response.firewall);
 
 ```typescript
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { FirewallGoogleGenerativeAI } from "voidhack-agent-defender/providers";
+import { FirewallGoogleGenerativeAI } from "agent-defender/providers";
 
 const raw = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 const client = new FirewallGoogleGenerativeAI(raw, { policyPath: "policy.yaml" });

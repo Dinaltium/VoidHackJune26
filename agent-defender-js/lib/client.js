@@ -6,7 +6,7 @@
  *
  * Usage:
  *   import OpenAI from "openai";
- *   import { FirewallOpenAI } from "voidhack-agent-defender";
+ *   import { FirewallOpenAI } from "agent-defender";
  *
  *   const raw = new OpenAI({ apiKey: "..." });
  *   const client = new FirewallOpenAI(raw, { policyPath: "policy.yaml" });
